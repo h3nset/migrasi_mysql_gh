@@ -96,7 +96,7 @@
     **Dependency:** Dependent pada Subtask 1.1-1.5  
   - Subtask 1.7: Siapkan lingkungan staging (replikasi 1:1 dari produksi termasuk HA setup).  
     **Deliverables:** Staging environment fully configured  
-    **PIC:** DevOps Team, Vendor Support  
+    **PIC:** Infrastructure Team, Vendor Support  
     **Dependency:** Dependent pada Subtask 1.3  
 
 - **Task 2: Backup & Pengujian Awal**  
