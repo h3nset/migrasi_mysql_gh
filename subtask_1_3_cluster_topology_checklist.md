@@ -11,7 +11,7 @@
 
 ### **1. CURRENT REPLICATION TOPOLOGY AUDIT**
 
-#### **1.1 Existing Replication Status**
+#### **1.1 Status Replikasi saat ini**
 | **Server** | **Hostname/IP** | **Role** | **Replication Status** | **Lag (seconds)** | **GTID Mode** | **Binary Log** | **Relay Log** |
 |------------|-----------------|----------|----------------------|-------------------|---------------|----------------|---------------|
 | SRV-01 | [HOSTNAME/IP] | ☐ Master ☐ Slave ☐ Standalone | ☐ Running ☐ Stopped ☐ Error | ☐ | ☐ ON ☐ OFF | ☐ Enabled ☐ Disabled | ☐ Enabled ☐ Disabled |
@@ -19,6 +19,16 @@
 | SRV-03 | [HOSTNAME/IP] | ☐ Master ☐ Slave ☐ Standalone | ☐ Running ☐ Stopped ☐ Error | ☐ | ☐ ON ☐ OFF | ☐ Enabled ☐ Disabled | ☐ Enabled ☐ Disabled |
 | SRV-04 | [HOSTNAME/IP] | ☐ Master ☐ Slave ☐ Standalone | ☐ Running ☐ Stopped ☐ Error | ☐ | ☐ ON ☐ OFF | ☐ Enabled ☐ Disabled | ☐ Enabled ☐ Disabled |
 | SRV-05 | [HOSTNAME/IP] | ☐ Master ☐ Slave ☐ Standalone | ☐ Running ☐ Stopped ☐ Error | ☐ | ☐ ON ☐ OFF | ☐ Enabled ☐ Disabled | ☐ Enabled ☐ Disabled |
+
+**Catatan Istilah:**
+1. **Master**: Server utama yang menerima operasi tulis dan mengirimkan perubahan ke server lain.
+2. **Slave**: Server yang menerima dan menerapkan perubahan data dari server Master.
+3. **Standalone**: Server yang berdiri sendiri tanpa koneksi replikasi.
+4. **Replication Status**: Status proses replikasi; Running (berjalan), Stopped (berhenti), atau Error (mengalami kesalahan).
+5. **Lag**: Selisih waktu (dalam detik) antara transaksi di Master dan penerapannya di Slave.
+6. **GTID Mode**: Global Transaction Identifier, metode pelacakan transaksi yang memudahkan failover dan pemulihan.
+7. **Binary Log**: File log yang berisi semua perubahan data, digunakan untuk replikasi dan pemulihan.
+8. **Relay Log**: File log pada Slave yang berisi perubahan data yang diterima dari Master sebelum diterapkan.
 
 **Assessment Commands:**
 ```sql
@@ -369,6 +379,24 @@ SELECT * FROM performance_schema.replication_group_member_stats;
 ---
 
 ### **9. MIGRATION IMPACT ASSESSMENT**
+
+Bagian ini menganalisa dampak migrasi dari arsitektur database tradisional ke InnoDB Cluster pada aplikasi dan operasional. Assessment mencakup perubahan string koneksi aplikasi yang diperlukan untuk menggunakan MySQL Router, serta perubahan operasional dalam pengelolaan database seperti backup, failover, maintenance, monitoring, dan scaling. Bagian ini membantu mengidentifikasi kesiapan aplikasi untuk migrasi dan kebutuhan pelatihan tim operasional untuk mengelola lingkungan cluster baru.
+
+#### **9.1 Application Connection String Changes**
+| **Application** | **Current Connection** | **New Connection (Router)** | **Code Changes Required** | **Test Status** |
+|-----------------|----------------------|----------------------------|--------------------------|-----------------|
+| [APP_NAME_1] | `srv-01:3306` | `router-01:6446,router-02:6446` | ☐ Minimal ☐ Significant | ☐ Tested ☐ Pending |
+| [APP_NAME_2] | `srv-02:3306` | `router-01:6447,router-02:6447` | ☐ Minimal ☐ Significant | ☐ Tested ☐ Pending |
+| [APP_NAME_3] | Multiple servers | `router-01:6446,router-02:6446` | ☐ Minimal ☐ Significant | ☐ Tested ☐ Pending |
+
+#### **9.2 Operational Changes**
+| **Operation** | **Current Method** | **Cluster Method** | **Training Required** | **Documentation Updated** |
+|---------------|-------------------|-------------------|---------------------|--------------------------|
+| Backup | mysqldump + cron | Enterprise Backup + cluster-aware | ☐ Yes ☐ No | ☐ Yes ☐ No |
+| Failover | Manual DNS change | Automatic via router | ☐ Yes ☐ No | ☐ Yes ☐ No |
+| Maintenance | Stop/start single server | Rolling maintenance | ☐ Yes ☐ No | ☐ Yes ☐ No |
+| Monitoring | Single server metrics | Cluster + router metrics | ☐ Yes ☐ No | ☐ Yes ☐ No |
+| Scaling | Add read replicas | Add cluster members | ☐ Yes ☐ No | ☐ Yes ☐ No |
 
 #### **9.1 Application Connection String Changes**
 | **Application** | **Current Connection** | **New Connection (Router)** | **Code Changes Required** | **Test Status** |

@@ -9,6 +9,10 @@
 
 ## **MySQL 8.4 Enterprise Breaking Changes Assessment**
 
+*Penilaian perubahan signifikan pada MySQL 8.4 Enterprise yang dapat menyebabkan masalah kompatibilitas pada aplikasi yang ada. Dokumen ini memberikan panduan evaluasi untuk mengidentifikasi, menganalisis, dan merencanakan mitigasi terhadap potensi masalah saat migrasi dari MySQL versi 5.6/5.7 ke 8.4 Enterprise.*
+
+---
+
 ### **1. AUTHENTICATION PLUGIN CHANGES**
 
 #### **1.1 Default Authentication Plugin**
