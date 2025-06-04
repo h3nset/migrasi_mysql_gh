@@ -1,7 +1,62 @@
 ### **Project Timeline: Migrasi & Upgrade MySQL 5.6/5.7 ke 8.4 Enterprise + Upgrade OS ke CentOS**  
 **Environment:** MySQL 8.4 Enterprise dengan High Availability (MySQL Router + InnoDB Cluster)  
 **Jumlah Server:** 10 (termasuk Router nodes)  
-**Total Estimasi:** 16 Minggu (termasuk buffer & adaptasi HA setup)  
+**Total Estimasi:** 16 Minggu (termasuk buffer & adaptasi HA setup)
+**Person in Charge:** 
+  - **INTERNAL**
+    - **Project Manager:** BUNGARAN PANGGABEAN (BPA)
+      - **Project Leader:** JAN HILTON (JAN)
+        - **Developer Team:** BAYU WIRASMO (BAW), AKSAN (AKS), WAWAN (WAN), HERY (HER),FARHAN (FAR)
+        - **DevOps Team:** HENDRA (HEN), TEDDY (TED), NOVAL (NOV), MALDI (MAL)
+          - **DBA:** DWI (DWI)
+        - **Infrastructure Team:** FAIZ (FAZ), 
+  - **EXTERNAL**
+    - **Vendor Support:** SUPPORT (SUP) 
+
+
+---
+
+## **DELIVERABLES PROJECT**
+
+### **Deliverables Utama:**
+1. **Infrastruktur Terupgrade**
+   - 10 server menjalankan CentOS Linux (versi stable terbaru)
+   - MySQL 8.4 Enterprise beroperasi penuh tanpa kehilangan data
+   - Setup High Availability dengan InnoDB Cluster + MySQL Router
+   - Seluruh aplikasi kompatibel dan berjalan di environment baru
+
+2. **Implementasi Fitur Enterprise**
+   - MySQL Enterprise Security (audit, encryption, firewall) terkonfigurasi
+   - MySQL Enterprise Monitor dengan real-time alerting
+   - Strategi MySQL Enterprise Backup terimplementasi
+   - Optimasi performa untuk enterprise workloads
+
+3. **Paket Dokumentasi**
+   - Dokumentasi arsitektur sistem lengkap
+   - Operational runbooks untuk maintenance harian
+   - Prosedur emergency dan rencana rollback
+   - Performance baseline dan panduan optimasi
+
+4. **Transfer Pengetahuan**
+   - Tim internal terlatih pada fitur MySQL 8.4 Enterprise
+   - Tim operasional tersertifikasi untuk production support
+   - Panduan troubleshooting dan best practices
+   - Handover vendor dengan dokumentasi lengkap
+
+### **Deliverables Teknis:**
+- **Infrastruktur:** Environment produksi ter-migrasi dan tervalidasi penuh
+- **Keamanan:** Implementasi security tingkat enterprise
+- **Monitoring:** Sistem monitoring dan alerting komprehensif
+- **Backup:** Strategi backup otomatis dengan disaster recovery
+- **Performa:** Konfigurasi teroptimasi untuk high availability
+
+### **Deliverables Manajemen:**
+- **Laporan Project:** Laporan eksekusi project lengkap dengan metrik
+- **Risk Assessment:** Analisa risiko pasca-implementasi
+- **Lessons Learned:** Dokumentasi untuk project masa depan
+- **Compliance:** Dokumentasi compliance license dan audit
+
+**Kriteria Keberhasilan Project:** Migrasi zero downtime, peningkatan performa, security tingkat enterprise, tim operasional terlatih
 
 ---
 
@@ -74,13 +129,13 @@
 #### **Fase 1: Upgrade OS ke CentOS (Minggu 3-5)**  
 **Tujuan:** Migrasi OS dengan minimal disruption  
 **Deliverables:** Server dengan OS baru, aplikasi ter-migrasi, dokumentasi konfigurasi  
-**PIC:** DevOps Team, Vendor Support  
+**PIC:** DevOps Team, Infrastructure Team, Vendor Support  
 **Task Dependency:** Dependent pada Fase 0  
 
 **Pendekatan:** Server-by-server (prioritaskan non-produksi pertama).  
 - **Task 3: Migrasi OS ke CentOS**  
   **Deliverables:** Server dengan CentOS baru, validasi konektivitas lengkap  
-  **PIC:** DevOps Team, Vendor Support  
+  **PIC:** DevOps Team, Infrastructure Team, Vendor Support  
   **Dependency:** Dependent pada Task 2  
   - Subtask 3.1: Deploy CentOS baru di server cadangan (fresh install).  
     **Deliverables:** Fresh CentOS installation ready  
