@@ -2,14 +2,16 @@
 
 ## 📋 Overview
 **Project:** Migrasi MySQL ke High Availability Setup  
-**Target Date:** Meeting dengan Vendor - Minggu Depan  
+**Target Date:** Meeting Internal - 19 Juni 2025 16:30-18:00 WIB  
+**Attendees:** JH, HS, MF, RI
 **Prepared by:** Project Manager  
 **For:** Tim Infrastructure  
 
 ### 👥 **Responsibility Legend**
-- **[MF]** - Mohammad Faiz (Infrastructure) - Hardware, VM, Network, Storage
+- **[MF]** - Mohammad Faiz (Head of Infrastructure) - Hardware, VM, Network, Storage
+- **[RI]** - Rizky (Infrastructure) - Hardware, VM, Network, Storage
 - **[DS]** - Dwi Sasono (DB Administrator) - MySQL Configuration, Tuning, Backup
-- **[JH]** - Jan Hilton (Manager) - Cost, Budget, Business Decisions
+- **[JH]** - Jan Hilton (MIS Manager) - Cost, Budget, Business Decisions
 - **[HS]** - Hendra Setiaji (Project Manager) - Project Orchestration, Planning
 - **[BW]** - Bayu Wirasmo (Senior Dev) - Application, Stored Procedures, Tables
 - **[AA]** - Aksan Azhar (Supervisor Dev) - Application, Stored Procedures, Tables
@@ -27,14 +29,15 @@
 
 ### ✅ **Pemilihan Platform Deployment**
 - [ ] **VM vs Bare Metal Decision**
-  - [ ] Evaluasi kebutuhan resource sharing **[MF]**
-  - [ ] Analisis licensing VMware (current: max 3 license terpakai) **[MF]**
-  - [ ] Pertimbangan maintenance complexity **[MF]**
-  - [ ] Cost comparison antara VM dan Bare Metal **[JH]**
+  - [x] Evaluasi kebutuhan resource sharing **[MF]**
+  - [x] Analisis licensing VMware (current: max 3 license terpakai) **[MF]**
+  - [x] Pertimbangan maintenance complexity **[MF]**
+  - [x] Cost comparison antara VM dan Bare Metal **[JH]**
+     - [x] Akurasi cost masih menggunakan pembulatan**[JH]**
   - [ ] Impact terhadap performance MySQL **[DS]**
 
 - [ ] **3-Node Architecture Confirmation**
-  - [ ] Validasi kebutuhan minimum 3 node untuk HA **[DS] + [MF]**
+  - [x] Validasi kebutuhan minimum 3 node untuk HA **[DS] + [MF]**
   - [ ] Topology design (Active-Active-Active vs Active-Passive) **[DS]**
   - [ ] Node distribution strategy **[MF]**
   - [ ] Failover mechanism design **[DS]**
@@ -55,6 +58,7 @@
 - [ ] **MySQL Router Configuration**
   - [ ] Router placement strategy (per application server vs dedicated) **[DS] + [MF]**
   - [ ] Load balancing algorithm selection **[DS]**
+     - [ ] Kemungkinan besar  tidak digunakan
   - [ ] Connection pooling configuration **[DS] + [BW] + [AA]**
   - [ ] Health check mechanism **[DS]**
   - [ ] Failover timeout settings **[DS]**
@@ -67,8 +71,10 @@
 
 ### ✅ **Network Architecture**
 - [ ] **Network Segmentation**
-  - [ ] Database network isolation **[MF]**
+  - [ ] Database network isolation ( Membuat  Kerajaan Sendiri ) **[MF]**
+    - [ ] Terhubung / terintegrasi  dengan NetApp Existing  yang  sudah di Expand
   - [ ] Inter-node communication network **[MF]**
+    - [ ] Check daftar IP yang available  di rencanakan akan di pakai
   - [ ] Management network setup **[MF]**
   - [ ] Backup network considerations **[MF] + [DS]**
 
@@ -84,6 +90,7 @@
 ### ✅ **Hardware Specifications (Per Node)**
 - [ ] **CPU Requirements**
   - [ ] Core count untuk MySQL workload **[MF] + [DS]**
+    - [ ] Ada di  Dokumen Excel pak Jan 
   - [ ] CPU architecture compatibility **[MF]**
   - [ ] Performance benchmarking requirements **[DS]**
 
@@ -95,19 +102,19 @@
 
 - [ ] **Storage Specifications**
   - [ ] Local storage untuk OS dan logs **[MF]**
-  - [ ] Shared storage configuration (NetApp) **[MF]**
+  - [x] Shared storage configuration (NetApp) **[MF]**
   - [ ] Disk I/O performance requirements **[DS] + [MF]**
   - [ ] Backup storage allocation **[DS] + [MF]**
 
 ### ✅ **Operating System & Software**
 - [ ] **OS Selection & Configuration**
-  - [ ] Linux distribution choice **[MF]**
-  - [ ] Kernel optimization untuk database **[MF] + [DS]**
+  - [x] Linux distribution choice **[MF]**
+  - [ ] Kernel optimization untuk database **[DS]**
   - [ ] Security hardening requirements **[MF]**
   - [ ] Monitoring agent installation **[MF] + [DS]**
 
 - [ ] **MySQL Version & Configuration**
-  - [ ] MySQL version selection (8.0.x) **[DS]**
+  - [x] MySQL version selection (8.4) **[DS]**
   - [ ] InnoDB configuration optimization **[DS]**
   - [ ] Security configuration **[DS]**
   - [ ] Performance tuning parameters **[DS]**
@@ -119,7 +126,7 @@
 ### ✅ **DRC (Disaster Recovery Center) Strategy**
 - [ ] **HA-based DRC Implementation**
   - [ ] Confirm DRC akan dilayani oleh HA (bukan skema DRC terpisah) **[DS] + [MF] + [HS]**
-  - [ ] Cross-site replication setup **[DS] + [MF]**
+  - [ ] Cross-site Group replication setup **[DS] + [MF]**
   - [ ] RTO/RPO requirements definition **[DS] + [HS] + [JH]**
   - [ ] Disaster recovery testing procedure **[DS] + [HS]**
 
@@ -137,7 +144,7 @@
 ### ✅ **Maintenance Procedures**
 - [ ] **Planned Maintenance**
   - [ ] Rolling maintenance procedure (untuk 3-node) **[DS] + [MF]**
-  - [ ] OS patching strategy **[MF]**
+  - [ ] OS patching strategy **[DS] + [MF]**
   - [ ] MySQL upgrade procedure **[DS]**
   - [ ] Zero-downtime maintenance capability **[DS] + [MF]**
 
