@@ -95,7 +95,7 @@ Proyek migrasi database MySQL ke MySQL Enterprise Edition sedang berlangsung dal
 #### 3. **Infrastructure Preparation**
 - **Duration:** 2 minggu
 - **Activities:**
-  - Storage expansion (400GB + 600GB)
+  - Storage expansion 6TB NetAPP( perkiraan )
   - VM resource allocation
   - Network configuration for cluster
 
@@ -129,8 +129,9 @@ Proyek migrasi database MySQL ke MySQL Enterprise Edition sedang berlangsung dal
 ## Investment Summary
 
 ### Infrastructure Investment
-- Storage expansion: 1TB total (400GB + 600GB)
-- Hardware assessment dan potential upgrade
+- Storage expansion: 6TB total 
+- Hardware assessment dan potential upgrade terkini  masih  ongoing oleh MII
+   - NetApp, SunSwitch , BareMetal Server
 
 ### Software Investment
 - MySQL Enterprise Edition licenses
