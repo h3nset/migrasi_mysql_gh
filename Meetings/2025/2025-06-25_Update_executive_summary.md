@@ -129,8 +129,8 @@ Proyek migrasi database MySQL ke MySQL Enterprise Edition sedang berlangsung dal
 ## Investment Summary
 
 ### Infrastructure Investment
-- Storage expansion: 1TB total (400GB + 600GB)
-- Hardware assessment dan potential upgrade
+- Storage expansion - as for now ( TBA by @jan.hilton )
+- Hardware assessment dan potential upgrade - as for now ( TBA by @faiz )
 
 ### Software Investment
 - MySQL Enterprise Edition licenses
@@ -141,10 +141,7 @@ Proyek migrasi database MySQL ke MySQL Enterprise Edition sedang berlangsung dal
 
 ## Rekomendasi untuk Board
 
-1. **Approve** final hardware assessment dan proceed dengan procurement
-2. **Endorse** 3-node cluster architecture untuk optimal HA
-3. **Allocate** budget untuk storage expansion dan professional services
-4. **Schedule** implementation window (2-jam downtime) dengan business stakeholders
+ **Approve** final hardware assessment dan proceed dengan procurement
 
 ---
 

@@ -1,0 +1,15 @@
+stages:
+  - sync
+
+sync_job:
+  stage: sync
+  tags:
+    - migrasi_mysql
+  script:
+    - echo "Mulai sync job"
+    - bash /home/user/Projects/sync_migrasi.sh > /home/user/Projects/gitlab-logs/rsync.log 2>&1
+    - echo "Selesai"
+    - ls -la /home/user/Projects/gitlab-logs/rsync.log
+  artifacts:
+    paths:
+      - /home/user/Projects/gitlab-logs/rsync.log
