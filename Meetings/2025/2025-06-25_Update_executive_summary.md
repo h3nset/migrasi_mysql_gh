@@ -75,7 +75,7 @@ Proyek migrasi database MySQL ke MySQL Enterprise Edition sedang berlangsung dal
 ### Immediate Actions (Juli 2025)
 
 #### 1. **Hardware Assessment Completion**
-- **PIC:** MII Team (Vina Wiharja, Aziz Prastyo Wibowo)
+- **PIC:** MII Team (Vina Wiharja, Aziz Prastyo Wibowo, Gunawan)
 - **Target:** Juli 2025
 - **Deliverable:** 
   - Final hardware specification report
