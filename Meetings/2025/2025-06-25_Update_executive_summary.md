@@ -10,7 +10,7 @@
 
 ## Ringkasan Eksekutif
 
-Proyek migrasi database MySQL ke MySQL Enterprise Edition sedang berlangsung dalam tahap perencanaan infrastruktur. Proyek ini melibatkan kolaborasi antara AMS, Oracle MySQL, dan MII sebagai implementor. Fokus utama saat ini adalah finalisasi arsitektur High Availability(HA) dan sizing infrastruktur yang tepat.
+Proyek migrasi database MySQL ke MySQL Enterprise Edition sedang berlangsung dalam tahap perencanaan infrastruktur. Proyek ini melibatkan kolaborasi antara MIS-AMS, Oracle MySQL, dan MII sebagai implementor. Fokus utama saat ini adalah finalisasi arsitektur High Availability(HA) dan sizing infrastruktur yang tepat.
 
 ---
 
