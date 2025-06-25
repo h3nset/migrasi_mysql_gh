@@ -7,9 +7,14 @@ sync_job:
     - migrasi_mysql
   script:
     - echo "Mulai sync job"
-    - bash /home/user/Projects/sync_migrasi.sh > /home/user/Projects/gitlab-logs/rsync.log 2>&1
+    - mkdir -p logs
+    - bash /home/user/Projects/sync_migrasi.sh > logs/rsync.log 2>&1
     - echo "Selesai"
-    - ls -la /home/user/Projects/gitlab-logs/rsync.log
+    - echo "Log file summary:"
+    - tail -10 logs/rsync.log
   artifacts:
     paths:
-      - /home/user/Projects/gitlab-logs/rsync.log
+      - logs/rsync.log
+    expire_in: 1 week
+  after_script:
+    - echo "Job completed, artifacts should be available"
