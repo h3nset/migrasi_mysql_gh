@@ -10,7 +10,7 @@
 
 ## Ringkasan Eksekutif
 
-Proyek migrasi database MySQL ke MySQL Enterprise Edition sedang berlangsung dalam tahap perencanaan infrastruktur. Proyek ini melibatkan kolaborasi antara AMS, Oracle MySQL, dan MII sebagai implementor. Fokus utama saat ini adalah finalisasi arsitektur High Availability dan sizing infrastruktur yang tepat.
+Proyek migrasi database MySQL ke MySQL Enterprise Edition sedang berlangsung dalam tahap perencanaan infrastruktur. Proyek ini melibatkan kolaborasi antara AMS, Oracle MySQL, dan MII sebagai implementor. Fokus utama saat ini adalah finalisasi arsitektur High Availability(HA) dan sizing infrastruktur yang tepat.
 
 ---
 
@@ -76,7 +76,7 @@ Proyek migrasi database MySQL ke MySQL Enterprise Edition sedang berlangsung dal
 
 #### 1. **Hardware Assessment Completion**
 - **PIC:** MII Team (Vina Wiharja, Aziz Prastyo Wibowo)
-- **Target:** 30 Juli 2025
+- **Target:** Juli 2025
 - **Deliverable:** 
   - Final hardware specification report
   - Existing Lenovo server compatibility assessment
@@ -95,7 +95,7 @@ Proyek migrasi database MySQL ke MySQL Enterprise Edition sedang berlangsung dal
 #### 3. **Infrastructure Preparation**
 - **Duration:** 2 minggu
 - **Activities:**
-  - Storage expansion (400GB + 600GB)
+  - Storage expansion  , size Tobe Announce (TBA)
   - VM resource allocation
   - Network configuration for cluster
 
