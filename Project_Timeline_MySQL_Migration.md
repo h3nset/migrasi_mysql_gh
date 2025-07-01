@@ -97,10 +97,10 @@ Project migrasi MySQL ini bertujuan untuk mengupgrade infrastruktur database dar
 | **Oktober 2025** | Migration Scripts Preparation | Migration Scripts Ready |
 
 **🎯 DELIVERY FASE 2:**
-- ✅ **Infrastructure Siap Pakai**
-- ✅ **MySQL 8.4 Environment Ready**
-- ✅ **Application Migration Scripts**
-- ✅ **Draft Rencana Perbaikan Aplikasi**
+- ⬜ **Infrastructure Siap Pakai**
+- ⬜ **MySQL 8.4 Environment Ready**
+- ⬜ **Application Migration Scripts**
+- ⬜ **Draft Rencana Perbaikan Aplikasi**
 
 ---
 
