@@ -12,11 +12,11 @@
 Project migrasi MySQL ini bertujuan untuk mengupgrade infrastruktur database dari versi lama ke MySQL 8.4 Enterprise Edition dengan target completion akhir tahun 2025. Project dibagi menjadi 5 fase utama dengan total durasi estimasi 8 bulan.
 
 **Key Milestones:**
-- ✅ Fase 1: Budget Approval (Juli 2025)
-- 🎯 Fase 2: Infrastructure Ready (Oktober 2025)
-- 🎯 Fase 3: Migration Complete (November 2025)
-- 🎯 Fase 4: Application Ready (Desember 2025)
-- 🎯 Fase 5: Go-Live (Desember 2025)
+- 🔄 Fase 1: Budget Approval (Juli 2025) **← CURRENT PHASE**
+- ⬜ Fase 2: Infrastructure Ready (Oktober 2025)
+- ⬜ Fase 3: Migration Complete (November 2025)
+- ⬜ Fase 4: Application Ready (Desember 2025)
+- ⬜ Fase 5: Go-Live (Desember 2025)
 
 ---
 
