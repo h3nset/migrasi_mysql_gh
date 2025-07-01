@@ -139,11 +139,28 @@
             opacity: 0.8;
         }
 
-        .fase-1 { background: var(--fase1-color); }
-        .fase-2 { background: var(--fase2-color); }
-        .fase-3 { background: var(--fase3-color); }
-        .fase-4 { background: var(--fase4-color); }
-        .fase-5 { background: var(--fase5-color); }
+        .fase-1 { background: #2980b9; color: white; }
+        .fase-2 { background: #8e44ad; color: white; }
+        .fase-3 { background: #d35400; color: white; }
+        .fase-4 { background: #27ae60; color: white; }
+        .fase-5 { background: #2c3e50; color: white; }
+
+        .current-progress { 
+            background: #e74c3c !important; 
+            color: white !important;
+            animation: blink 1.5s infinite;
+        }
+
+        .completed-task { 
+            background: #95a5a6 !important; 
+            color: white !important;
+            opacity: 0.7;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.6; }
+        }
 
         .milestone {
             background: var(--warning-color) !important;
