@@ -165,7 +165,7 @@ Project migrasi MySQL ini bertujuan untuk mengupgrade infrastruktur database dar
 
 ### 🎉 **FASE 5: GO-LIVE & PROJECT CLOSURE**
 **Periode:** Desember 2025 Week 4 (1 minggu)  
-**Status:** 🎯 Planned  
+**Status:** ⬜ Planned  
 **PIC:** Project Manager + All Teams
 
 #### Minggu ke 32 (Desember Week 4)
