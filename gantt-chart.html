@@ -633,141 +633,397 @@
     </div>
 
     <script>
-        // Sample JSON Data
+        // Project Data - Migrasi MySQL ke Versi 8.4
         const projectData = {
             "project": {
-                "name": "MySQL Migration Project",
-                "startDate": "2025-01-01",
+                "name": "Migrasi MySQL Enterprise Edition ke Versi 8.4",
+                "startDate": "2025-05-01",
                 "endDate": "2025-12-31"
             },
             "phases": [
                 {
                     "id": "phase-1",
-                    "name": "Assessment & Planning",
+                    "name": "FASE 1: PERSIAPAN & PLANNING",
                     "color": "#0052CC",
                     "tasks": [
                         {
-                            "id": "task-1",
-                            "name": "Server Infrastructure Audit",
-                            "startDate": "2025-01-01",
-                            "endDate": "2025-01-15",
+                            "id": "task-1-1",
+                            "name": "Assessment & Audit",
+                            "startDate": "2025-05-01",
+                            "endDate": "2025-05-28",
                             "progress": 100,
-                            "pic": "John Doe",
-                            "description": "Comprehensive audit of existing server infrastructure, hardware specifications, and performance metrics",
+                            "pic": "Tim DBA + Vendor",
+                            "description": "Analisis infrastructure existing - Infrastructure Assessment Report",
                             "dependencies": [],
                             "status": "completed"
                         },
                         {
-                            "id": "task-2",
+                            "id": "task-1-2",
                             "name": "Breaking Changes Analysis",
-                            "startDate": "2025-01-16",
-                            "endDate": "2025-02-15",
-                            "progress": 85,
-                            "pic": "Jane Smith",
-                            "description": "Identify and analyze potential breaking changes in MySQL version upgrade",
-                            "dependencies": ["task-1"],
+                            "startDate": "2025-05-01",
+                            "endDate": "2025-05-28",
+                            "progress": 100,
+                            "pic": "Tim Development",
+                            "description": "Identifikasi compatibility issues - Breaking Changes Checklist",
+                            "dependencies": [],
+                            "status": "completed"
+                        },
+                        {
+                            "id": "task-1-3",
+                            "name": "Cluster Topology Planning",
+                            "startDate": "2025-05-01",
+                            "endDate": "2025-05-28",
+                            "progress": 100,
+                            "pic": "Tim Infrastructure",
+                            "description": "Design arsitektur target - Topology Blueprint",
+                            "dependencies": [],
+                            "status": "completed"
+                        },
+                        {
+                            "id": "task-1-4",
+                            "name": "Vendor Evaluation",
+                            "startDate": "2025-06-01",
+                            "endDate": "2025-06-28",
+                            "progress": 100,
+                            "pic": "Procurement Team",
+                            "description": "Shortlist 3 vendor terbaik - Vendor Comparison Matrix",
+                            "dependencies": ["task-1-1"],
+                            "status": "completed"
+                        },
+                        {
+                            "id": "task-1-5",
+                            "name": "Budgeting & Cost Analysis",
+                            "startDate": "2025-06-01",
+                            "endDate": "2025-06-28",
+                            "progress": 100,
+                            "pic": "Finance Team",
+                            "description": "Finalisasi budget requirements - Detailed Budget Proposal",
+                            "dependencies": ["task-1-1"],
+                            "status": "completed"
+                        },
+                        {
+                            "id": "task-1-6",
+                            "name": "Application Compatibility Testing",
+                            "startDate": "2025-06-01",
+                            "endDate": "2025-07-15",
+                            "progress": 75,
+                            "pic": "Tim Development",
+                            "description": "Test compatibility aplikasi - Compatibility Report (CURRENT)",
+                            "dependencies": ["task-1-2"],
                             "status": "in-progress"
                         },
                         {
-                            "id": "task-3",
-                            "name": "Cluster Topology Design",
-                            "startDate": "2025-02-01",
-                            "endDate": "2025-02-28",
-                            "progress": 60,
-                            "pic": "Mike Johnson",
-                            "description": "Design optimal cluster topology for high availability and performance",
-                            "dependencies": ["task-1"],
+                            "id": "task-1-7",
+                            "name": "BOD Presentation & Budget Approval",
+                            "startDate": "2025-07-01",
+                            "endDate": "2025-07-15",
+                            "progress": 50,
+                            "pic": "Management",
+                            "description": "Presentasi ke Board of Directors - Budget Approval",
+                            "dependencies": ["task-1-5"],
                             "status": "in-progress"
                         },
                         {
-                            "id": "task-4",
-                            "name": "Application Compatibility Check",
-                            "startDate": "2025-02-16",
-                            "endDate": "2025-03-15",
+                            "id": "task-1-8",
+                            "name": "Vendor Selection & Contract",
+                            "startDate": "2025-07-15",
+                            "endDate": "2025-07-31",
                             "progress": 0,
-                            "pic": "Sarah Wilson",
-                            "description": "Test application compatibility with new MySQL version",
-                            "dependencies": ["task-2"],
+                            "pic": "Procurement",
+                            "description": "Tender & Finalisasi kontrak vendor - Signed Contract",
+                            "dependencies": ["task-1-7"],
                             "status": "not-started"
+                        },
+                        {
+                            "id": "task-1-9",
+                            "name": "Rollback Plan Development",
+                            "startDate": "2025-07-15",
+                            "endDate": "2025-07-31",
+                            "progress": 0,
+                            "pic": "Tim DBA",
+                            "description": "Strategi contingency - Rollback Procedure",
+                            "dependencies": ["task-1-6"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-1-dev-1",
+                            "name": "Script Testing Development",
+                            "startDate": "2025-05-01",
+                            "endDate": "2025-06-30",
+                            "progress": 100,
+                            "pic": "Development Team",
+                            "description": "Development Team Independent Track - Test Scripts v1.0",
+                            "dependencies": [],
+                            "status": "completed"
+                        },
+                        {
+                            "id": "task-1-dev-2",
+                            "name": "MySQL 8.4 Community Testing",
+                            "startDate": "2025-06-01",
+                            "endDate": "2025-07-31",
+                            "progress": 60,
+                            "pic": "Development Team",
+                            "description": "Development Team Independent Track - Testing Report + Impact Analysis",
+                            "dependencies": ["task-1-dev-1"],
+                            "status": "in-progress"
                         }
                     ]
                 },
                 {
                     "id": "phase-2",
-                    "name": "Infrastructure Preparation",
+                    "name": "FASE 2: INFRASTRUCTURE DEVELOPMENT",
                     "color": "#00A86B",
                     "tasks": [
                         {
-                            "id": "task-5",
-                            "name": "Router Configuration",
-                            "startDate": "2025-03-01",
-                            "endDate": "2025-03-31",
+                            "id": "task-2-1",
+                            "name": "Hardware Procurement",
+                            "startDate": "2025-08-01",
+                            "endDate": "2025-08-14",
                             "progress": 0,
-                            "pic": "David Brown",
-                            "description": "Configure MySQL Router for load balancing and high availability",
-                            "dependencies": ["task-3"],
+                            "pic": "Vendor + Tim Infrastructure",
+                            "description": "Order NetApp, Sun Switch, Servers - Purchase Orders",
+                            "dependencies": ["task-1-8"],
                             "status": "not-started"
                         },
                         {
-                            "id": "task-6",
-                            "name": "Staging Environment Setup",
-                            "startDate": "2025-03-16",
-                            "endDate": "2025-04-30",
+                            "id": "task-2-2",
+                            "name": "Site Preparation",
+                            "startDate": "2025-08-15",
+                            "endDate": "2025-08-31",
                             "progress": 0,
-                            "pic": "Emily Davis",
-                            "description": "Set up staging environment for migration testing",
-                            "dependencies": ["task-4"],
+                            "pic": "Tim Infrastructure",
+                            "description": "Prepare datacenter space - Site Ready",
+                            "dependencies": ["task-2-1"],
                             "status": "not-started"
                         },
                         {
-                            "id": "task-7",
-                            "name": "Rollback Plan Development",
-                            "startDate": "2025-04-01",
-                            "endDate": "2025-04-15",
+                            "id": "task-2-3",
+                            "name": "Hardware Delivery & Installation",
+                            "startDate": "2025-09-01",
+                            "endDate": "2025-09-28",
                             "progress": 0,
-                            "pic": "Chris Lee",
-                            "description": "Develop comprehensive rollback plan and procedures",
-                            "dependencies": ["task-5"],
+                            "pic": "Vendor",
+                            "description": "Equipment delivery & installation - Hardware Commissioned",
+                            "dependencies": ["task-2-2"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-2-4",
+                            "name": "Network Configuration",
+                            "startDate": "2025-09-15",
+                            "endDate": "2025-09-30",
+                            "progress": 0,
+                            "pic": "Vendor + Tim Infrastructure",
+                            "description": "Configure switches & connectivity - Network Ready",
+                            "dependencies": ["task-2-3"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-2-5",
+                            "name": "MySQL Installation & Configuration",
+                            "startDate": "2025-10-01",
+                            "endDate": "2025-10-15",
+                            "progress": 0,
+                            "pic": "Vendor",
+                            "description": "Install MySQL 8.4 Enterprise - MySQL Environment Ready",
+                            "dependencies": ["task-2-4"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-2-6",
+                            "name": "Performance Tuning & Testing",
+                            "startDate": "2025-10-16",
+                            "endDate": "2025-10-31",
+                            "progress": 0,
+                            "pic": "Vendor + Tim DBA",
+                            "description": "Optimize database settings & testing - Infrastructure Sign-off",
+                            "dependencies": ["task-2-5"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-2-dev-1",
+                            "name": "Final Testing & Bug Fixes",
+                            "startDate": "2025-08-01",
+                            "endDate": "2025-08-31",
+                            "progress": 0,
+                            "pic": "Development Team",
+                            "description": "Development Team Parallel Track - Test Scripts v2.0",
+                            "dependencies": ["task-1-dev-2"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-2-dev-2",
+                            "name": "Application Optimization",
+                            "startDate": "2025-09-01",
+                            "endDate": "2025-09-30",
+                            "progress": 0,
+                            "pic": "Development Team",
+                            "description": "Development Team Parallel Track - Optimized Code Base",
+                            "dependencies": ["task-2-dev-1"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-2-dev-3",
+                            "name": "Migration Scripts Preparation",
+                            "startDate": "2025-10-01",
+                            "endDate": "2025-10-31",
+                            "progress": 0,
+                            "pic": "Development Team",
+                            "description": "Development Team Parallel Track - Migration Scripts Ready",
+                            "dependencies": ["task-2-dev-2"],
                             "status": "not-started"
                         }
                     ]
                 },
                 {
                     "id": "phase-3",
-                    "name": "Migration Execution",
+                    "name": "FASE 3: MIGRATION & UPGRADE",
                     "color": "#DE350B",
                     "tasks": [
                         {
-                            "id": "task-8",
-                            "name": "Data Migration",
-                            "startDate": "2025-05-01",
-                            "endDate": "2025-06-30",
+                            "id": "task-3-1",
+                            "name": "Pre-Migration Backup",
+                            "startDate": "2025-11-01",
+                            "endDate": "2025-11-07",
                             "progress": 0,
-                            "pic": "Alex Turner",
-                            "description": "Execute data migration from old to new MySQL cluster",
-                            "dependencies": ["task-6", "task-7"],
+                            "pic": "DBA Team",
+                            "description": "Full backup existing data - Backup Confirmation",
+                            "dependencies": ["task-2-6"],
                             "status": "not-started"
                         },
                         {
-                            "id": "task-9",
-                            "name": "Application Testing",
-                            "startDate": "2025-06-15",
-                            "endDate": "2025-07-31",
+                            "id": "task-3-2",
+                            "name": "Data Migration Execution",
+                            "startDate": "2025-11-08",
+                            "endDate": "2025-11-14",
                             "progress": 0,
-                            "pic": "Lisa Wang",
-                            "description": "Comprehensive testing of applications with new MySQL setup",
-                            "dependencies": ["task-8"],
+                            "pic": "Vendor + DBA Team",
+                            "description": "Migrate data to MySQL 8.4 - Migration Complete",
+                            "dependencies": ["task-3-1"],
                             "status": "not-started"
                         },
                         {
-                            "id": "task-10",
-                            "name": "Go-Live & Monitoring",
-                            "startDate": "2025-08-01",
-                            "endDate": "2025-08-31",
+                            "id": "task-3-3",
+                            "name": "Schema Upgrade",
+                            "startDate": "2025-11-08",
+                            "endDate": "2025-11-14",
                             "progress": 0,
-                            "pic": "Robert Chen",
-                            "description": "Production go-live and initial monitoring period",
-                            "dependencies": ["task-9"],
+                            "pic": "Vendor + Development Team",
+                            "description": "Update database schemas - Schema Updated",
+                            "dependencies": ["task-3-1"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-3-4",
+                            "name": "Data Validation",
+                            "startDate": "2025-11-15",
+                            "endDate": "2025-11-21",
+                            "progress": 0,
+                            "pic": "DBA + QA Team",
+                            "description": "Verify data integrity - Validation Report",
+                            "dependencies": ["task-3-2", "task-3-3"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-3-5",
+                            "name": "Performance Testing & Go/No-Go",
+                            "startDate": "2025-11-22",
+                            "endDate": "2025-11-30",
+                            "progress": 0,
+                            "pic": "Vendor + All Teams",
+                            "description": "Test system performance & migration validation - Sign-off Document",
+                            "dependencies": ["task-3-4"],
+                            "status": "not-started"
+                        }
+                    ]
+                },
+                {
+                    "id": "phase-4",
+                    "name": "FASE 4: TESTING & APPLICATION REFINEMENT",
+                    "color": "#8777D9",
+                    "tasks": [
+                        {
+                            "id": "task-4-1",
+                            "name": "Application Testing & Bug Fixing",
+                            "startDate": "2025-12-01",
+                            "endDate": "2025-12-14",
+                            "progress": 0,
+                            "pic": "Tim Development + QA",
+                            "description": "Test all applications & fix issues - Bug-free Applications",
+                            "dependencies": ["task-3-5"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-4-2",
+                            "name": "Performance Optimization",
+                            "startDate": "2025-12-08",
+                            "endDate": "2025-12-14",
+                            "progress": 0,
+                            "pic": "Tim Development",
+                            "description": "Optimize application performance - Optimized Code",
+                            "dependencies": ["task-4-1"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-4-3",
+                            "name": "User Acceptance Testing",
+                            "startDate": "2025-12-15",
+                            "endDate": "2025-12-21",
+                            "progress": 0,
+                            "pic": "End Users + QA Team",
+                            "description": "End-user validation - UAT Sign-off",
+                            "dependencies": ["task-4-2"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-4-4",
+                            "name": "Documentation & Training",
+                            "startDate": "2025-12-15",
+                            "endDate": "2025-12-21",
+                            "progress": 0,
+                            "pic": "All Teams",
+                            "description": "Update documentation & train teams - Training Complete",
+                            "dependencies": ["task-4-2"],
+                            "status": "not-started"
+                        }
+                    ]
+                },
+                {
+                    "id": "phase-5",
+                    "name": "FASE 5: GO-LIVE & PROJECT CLOSURE",
+                    "color": "#FF8B00",
+                    "tasks": [
+                        {
+                            "id": "task-5-1",
+                            "name": "Production Cutover",
+                            "startDate": "2025-12-22",
+                            "endDate": "2025-12-25",
+                            "progress": 0,
+                            "pic": "Project Manager + All Teams",
+                            "description": "Switch to new environment - Production Live",
+                            "dependencies": ["task-4-3", "task-4-4"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-5-2",
+                            "name": "Post Go-Live Monitoring",
+                            "startDate": "2025-12-25",
+                            "endDate": "2025-12-28",
+                            "progress": 0,
+                            "pic": "All Teams",
+                            "description": "24/7 monitoring first 72 hours - Stability Confirmed",
+                            "dependencies": ["task-5-1"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-5-3",
+                            "name": "Project Closure & Documentation",
+                            "startDate": "2025-12-29",
+                            "endDate": "2025-12-31",
+                            "progress": 0,
+                            "pic": "Project Manager",
+                            "description": "Document lessons learned - Project Closure Report",
+                            "dependencies": ["task-5-2"],
                             "status": "not-started"
                         }
                     ]
