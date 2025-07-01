@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Gantt Chart - MySQL Migration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #0052CC;
+            --dark-blue: #253858;
+            --completed-green: #00A86B;
+            --in-progress-blue: #0052CC;
+            --not-started-gray: #DFE1E6;
+            --overdue-red: #DE350B;
+            --light-gray: #F4F5F7;
+            --border-gray: #DFE1E6;
+            --text-dark: #172B4D;
+            --text-medium: #5E6C84;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .gantt-container {
+            max-width: 100%;
+            background: var(--white);
+            box-shadow: 0 2px 8px rgba(23, 43, 77, 0.12);
+        }
+
+        /* Header Section */
+        .gantt-header {
+            background: var(--white);
+            border-bottom: 2px solid var(--border-gray);
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-info h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--dark-blue);
+            margin-bottom: 8px;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            color: var(--text-medium);
+        }
+
+        .mini-calendar {
+            background: var(--light-gray);
+            padding: 16px;
+            border: 1px solid var(--border-gray);
+            min-width: 280px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .calendar-nav {
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px 8px;
+            transition: background-color 0.2s;
+        }
+
+        .calendar-nav:hover {
+            background: var(--border-gray);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .calendar-day {
+            padding: 6px 4px;
+            background: var(--white);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .calendar-day:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .calendar-day.today {
+            background: var(--completed-green);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .calendar-day.milestone {
+            background: var(--overdue-red);
+            color: var(--white);
+        }
+
+        /* Main Content Area */
+        .gantt-main {
+            display: flex;
+            height: calc(100vh - 140px);
+            overflow: hidden;
+        }
+
+        /* Task List Panel */
+        .task-list-panel {
+            width: 400px;
+            background: var(--white);
+            border-right: 2px solid var(--border-gray);
+            overflow-y: auto;
+        }
+
+        .phase-group {
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .phase-header {
+            background: var(--dark-blue);
+            color: var(--white);
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .phase-header:hover {
+            background: #1e2f4a;
+        }
+
+        .phase-toggle {
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+
+        .phase-group.collapsed .phase-toggle {
+            transform: rotate(-90deg);
+        }
+
+        .phase-meta {
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .task-list {
+            background: var(--white);
+        }
+
+        .phase-group.collapsed .task-list {
+            display: none;
+        }
+
+        .task-row {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-gray);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-row:hover {
+            background: var(--light-gray);
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+
+        .task-meta {
+            font-size: 12px;
+            color: var(--text-medium);
+            display: flex;
+            gap: 12px;
+        }
+
+        .task-pic {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pic-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-blue);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            margin-left: 8px;
+        }
+
+        .status-completed { background: var(--completed-green); }
+        .status-in-progress { background: var(--in-progress-blue); }
+        .status-not-started { background: var(--not-started-gray); }
+        .status-overdue { background: var(--overdue-red); }
+
+        /* Timeline Panel */
+        .timeline-panel {
+            flex: 1;
+            background: var(--white);
+            overflow: auto;
+            position: relative;
+        }
+
+        .timeline-header {
+            background: var(--light-gray);
+            border-bottom: 1px solid var(--border-gray);
+            height: 80px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .timeline-months {
+            display: flex;
+            height: 40px;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .timeline-weeks {
+            display: flex;
+            height: 40px;
+        }
+
+        .month-header, .week-header {
+            border-right: 1px solid var(--border-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            background: var(--light-gray);
+        }
+
+        .month-header {
+            background: var(--dark-blue);
+            color: var(--white);
+        }
+
+        .week-header.weekend {
+            background: #f8f9fa;
+            color: var(--text-medium);
+        }
+
+        .timeline-grid {
+            position: relative;
+            min-height: 600px;
+        }
+
+        .timeline-row {
+            height: 60px;
+            border-bottom: 1px solid var(--border-gray);
+            position: relative;
+        }
+
+        .phase-timeline-row {
+            height: 60px;
+            background: #f8f9fa;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .gantt-bar {
+            position: absolute;
+            height: 24px;
+            top: 18px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            color: var(--white);
+            font-size: 11px;
+            font-weight: 500;
+            padding: 0 8px;
+            overflow: hidden;
+        }
+
+        .gantt-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 5;
+        }
+
+        .gantt-bar.completed {
+            background: var(--completed-green);
+        }
+
+        .gantt-bar.in-progress {
+            background: linear-gradient(to right, var(--in-progress-blue) var(--progress, 0%), var(--not-started-gray) var(--progress, 0%));
+        }
+
+        .gantt-bar.not-started {
+            background: var(--not-started-gray);
+            color: var(--text-medium);
+        }
+
+        .gantt-bar.overdue {
+            background: var(--overdue-red);
+        }
+
+        .dependency-line {
+            position: absolute;
+            stroke: var(--primary-blue);
+            stroke-width: 2;
+            fill: none;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .dependency-arrow {
+            fill: var(--primary-blue);
+        }
+
+        /* Progress Indicator */
+        .progress-text {
+            margin-left: auto;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: var(--dark-blue);
+            color: var(--white);
+            padding: 12px 16px;
+            font-size: 12px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            max-width: 300px;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 4px;
+        }
+
+        .tooltip-content {
+            line-height: 1.4;
+        }
+
+        /* Task Detail Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: var(--white);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-gray);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dark-blue);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-medium);
+            padding: 4px;
+        }
+
+        .modal-close:hover {
+            color: var(--text-dark);
+        }
+
+        .modal-content {
+            display: grid;
+            gap: 16px;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--text-medium);
+        }
+
+        .info-value {
+            color: var(--text-dark);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--not-started-gray);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--completed-green);
+            transition: width 0.3s;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .gantt-main {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .task-list-panel {
+                width: 100%;
+                max-height: 400px;
+            }
+            
+            .gantt-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: stretch;
+            }
+            
+            .mini-calendar {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .project-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .task-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .calendar-grid {
+                font-size: 10px;
+            }
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Custom Scrollbar */
+        .timeline-panel::-webkit-scrollbar,
+        .task-list-panel::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .timeline-panel::-webkit-scrollbar-track,
+        .task-list-panel::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+
+        .timeline-panel::-webkit-scrollbar-thumb,
+        .task-list-panel::-webkit-scrollbar-thumb {
+            background: var(--border-gray);
+            transition: background-color 0.2s;
+        }
+
+        .timeline-panel::-webkit-scrollbar-thumb:hover,
+        .task-list-panel::-webkit-scrollbar-thumb:hover {
+            background: var(--text-medium);
+        }
+    </style>
+</head>
+<body>
+    <div class="gantt-container">
+        <!-- Header Section -->
+        <div class="gantt-header">
+            <div class="project-info">
+                <h1 id="project-title">MySQL Migration Project</h1>
+                <div class="project-meta">
+                    <span><strong>Start:</strong> <span id="project-start">2025-01-01</span></span>
+                    <span><strong>End:</strong> <span id="project-end">2025-12-31</span></span>
+                    <span><strong>Duration:</strong> <span id="project-duration">365 days</span></span>
+                </div>
+            </div>
+            
+            <div class="mini-calendar">
+                <div class="calendar-header">
+                    <button class="calendar-nav" id="prev-month">‹</button>
+                    <span id="calendar-month">July 2025</span>
+                    <button class="calendar-nav" id="next-month">›</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Calendar days will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="gantt-main">
+            <!-- Task List Panel -->
+            <div class="task-list-panel">
+                <div id="task-list-container">
+                    <!-- Task list will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Timeline Panel -->
+            <div class="timeline-panel">
+                <div class="timeline-header">
+                    <div class="timeline-months" id="timeline-months">
+                        <!-- Timeline months will be populated by JavaScript -->
+                    </div>
+                    <div class="timeline-weeks" id="timeline-weeks">
+                        <!-- Timeline weeks will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="timeline-grid" id="timeline-grid">
+                    <!-- Timeline content will be populated by JavaScript -->
+                    <svg class="dependency-lines" width="100%" height="100%" style="position: absolute; top: 0; left: 0; pointer-events: none;">
+                        <!-- Dependency lines will be drawn here -->
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title" id="tooltip-title"></div>
+        <div class="tooltip-content" id="tooltip-content"></div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title">Task Details</div>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-content" id="modal-content">
+                <!-- Modal content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample JSON Data
+        const projectData = {
+            "project": {
+                "name": "MySQL Migration Project",
+                "startDate": "2025-01-01",
+                "endDate": "2025-12-31"
+            },
+            "phases": [
+                {
+                    "id": "phase-1",
+                    "name": "Assessment & Planning",
+                    "color": "#0052CC",
+                    "tasks": [
+                        {
+                            "id": "task-1",
+                            "name": "Server Infrastructure Audit",
+                            "startDate": "2025-01-01",
+                            "endDate": "2025-01-15",
+                            "progress": 100,
+                            "pic": "John Doe",
+                            "description": "Comprehensive audit of existing server infrastructure, hardware specifications, and performance metrics",
+                            "dependencies": [],
+                            "status": "completed"
+                        },
+                        {
+                            "id": "task-2",
+                            "name": "Breaking Changes Analysis",
+                            "startDate": "2025-01-16",
+                            "endDate": "2025-02-15",
+                            "progress": 85,
+                            "pic": "Jane Smith",
+                            "description": "Identify and analyze potential breaking changes in MySQL version upgrade",
+                            "dependencies": ["task-1"],
+                            "status": "in-progress"
+                        },
+                        {
+                            "id": "task-3",
+                            "name": "Cluster Topology Design",
+                            "startDate": "2025-02-01",
+                            "endDate": "2025-02-28",
+                            "progress": 60,
+                            "pic": "Mike Johnson",
+                            "description": "Design optimal cluster topology for high availability and performance",
+                            "dependencies": ["task-1"],
+                            "status": "in-progress"
+                        },
+                        {
+                            "id": "task-4",
+                            "name": "Application Compatibility Check",
+                            "startDate": "2025-02-16",
+                            "endDate": "2025-03-15",
+                            "progress": 0,
+                            "pic": "Sarah Wilson",
+                            "description": "Test application compatibility with new MySQL version",
+                            "dependencies": ["task-2"],
+                            "status": "not-started"
+                        }
+                    ]
+                },
+                {
+                    "id": "phase-2",
+                    "name": "Infrastructure Preparation",
+                    "color": "#00A86B",
+                    "tasks": [
+                        {
+                            "id": "task-5",
+                            "name": "Router Configuration",
+                            "startDate": "2025-03-01",
+                            "endDate": "2025-03-31",
+                            "progress": 0,
+                            "pic": "David Brown",
+                            "description": "Configure MySQL Router for load balancing and high availability",
+                            "dependencies": ["task-3"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-6",
+                            "name": "Staging Environment Setup",
+                            "startDate": "2025-03-16",
+                            "endDate": "2025-04-30",
+                            "progress": 0,
+                            "pic": "Emily Davis",
+                            "description": "Set up staging environment for migration testing",
+                            "dependencies": ["task-4"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-7",
+                            "name": "Rollback Plan Development",
+                            "startDate": "2025-04-01",
+                            "endDate": "2025-04-15",
+                            "progress": 0,
+                            "pic": "Chris Lee",
+                            "description": "Develop comprehensive rollback plan and procedures",
+                            "dependencies": ["task-5"],
+                            "status": "not-started"
+                        }
+                    ]
+                },
+                {
+                    "id": "phase-3",
+                    "name": "Migration Execution",
+                    "color": "#DE350B",
+                    "tasks": [
+                        {
+                            "id": "task-8",
+                            "name": "Data Migration",
+                            "startDate": "2025-05-01",
+                            "endDate": "2025-06-30",
+                            "progress": 0,
+                            "pic": "Alex Turner",
+                            "description": "Execute data migration from old to new MySQL cluster",
+                            "dependencies": ["task-6", "task-7"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-9",
+                            "name": "Application Testing",
+                            "startDate": "2025-06-15",
+                            "endDate": "2025-07-31",
+                            "progress": 0,
+                            "pic": "Lisa Wang",
+                            "description": "Comprehensive testing of applications with new MySQL setup",
+                            "dependencies": ["task-8"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-10",
+                            "name": "Go-Live & Monitoring",
+                            "startDate": "2025-08-01",
+                            "endDate": "2025-08-31",
+                            "progress": 0,
+                            "pic": "Robert Chen",
+                            "description": "Production go-live and initial monitoring period",
+                            "dependencies": ["task-9"],
+                            "status": "not-started"
+                        }
+                    ]
+                }
+            ]
+        };
+
+        class GanttChart {
+            constructor(data) {
+                this.data = data;
+                this.currentDate = new Date();
+                this.calendarDate = new Date();
+                this.timelineStart = new Date(data.project.startDate);
+                this.timelineEnd = new Date(data.project.endDate);
+                this.dayWidth = 3; // pixels per day
+                this.init();
+            }
+
+            init() {
+                this.renderProjectInfo();
+                this.renderCalendar();
+                this.renderTaskList();
+                this.renderTimeline();
+                this.renderDependencies();
+                this.bindEvents();
+            }
+
+            renderProjectInfo() {
+                $('#project-title').text(this.data.project.name);
+                $('#project-start').text(this.formatDate(new Date(this.data.project.startDate)));
+                $('#project-end').text(this.formatDate(new Date(this.data.project.endDate)));
+                
+                const duration = Math.ceil((this.timelineEnd - this.timelineStart) / (1000 * 60 * 60 * 24));
+                $('#project-duration').text(`${duration} days`);
+            }
+
+            renderCalendar() {
+                const year = this.calendarDate.getFullYear();
+                const month = this.calendarDate.getMonth();
+                
+                $('#calendar-month').text(this.calendarDate.toLocaleDateString('en-US', { 
+                    month: 'long', 
+                    year: 'numeric' 
+                }));
+
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const startDate = new Date(firstDay);
+                startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+                const calendarGrid = $('#calendar-grid');
+                calendarGrid.empty();
+
+                // Week headers
+                const weekHeaders = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+                weekHeaders.forEach(day => {
+                    calendarGrid.append(`<div class="calendar-day" style="font-weight: 600; background: var(--dark-blue); color: var(--white);">${day}</div>`);
+                });
+
+                // Calendar days
+                for (let i = 0; i < 42; i++) {
+                    const currentDate = new Date(startDate);
+                    currentDate.setDate(startDate.getDate() + i);
+                    
+                    const isCurrentMonth = currentDate.getMonth() === month;
+                    const isToday = this.isSameDay(currentDate, this.currentDate);
+                    const isMilestone = this.isMilestone(currentDate);
+                    
+                    let classes = 'calendar-day';
+                    if (isToday) classes += ' today';
+                    if (isMilestone) classes += ' milestone';
+                    if (!isCurrentMonth) classes += ' other-month';
+                    
+                    const opacity = isCurrentMonth ? 1 : 0.3;
+                    
+                    calendarGrid.append(`
+                        <div class="${classes}" style="opacity: ${opacity}" data-date="${currentDate.toISOString()}">
+                            ${currentDate.getDate()}
+                        </div>
+                    `);
+                }
+            }
+
+            renderTaskList() {
+                const container = $('#task-list-container');
+                container.empty();
+
+                this.data.phases.forEach(phase => {
+                    const completedTasks = phase.tasks.filter(task => task.status === 'completed').length;
+                    const totalTasks = phase.tasks.length;
+                    const phaseProgress = Math.round((completedTasks / totalTasks) * 100);
+
+                    const phaseHtml = `
+                        <div class="phase-group" data-phase-id="${phase.id}">
+                            <div class="phase-header" style="background-color: ${phase.color}">
+                                <div>
+                                    <div>${phase.name}</div>
+                                    <div class="phase-meta">${completedTasks}/${totalTasks} tasks • ${phaseProgress}% complete</div>
+                                </div>
+                                <span class="phase-toggle">▼</span>
+                            </div>
+                            <div class="task-list">
+                                ${phase.tasks.map(task => this.renderTaskRow(task)).join('')}
+                            </div>
+                        </div>
+                    `;
+                    container.append(phaseHtml);
+                });
+            }
+
+            renderTaskRow(task) {
+                const initials = task.pic.split(' ').map(name => name[0]).join('');
+                const statusColor = this.getStatusColor(task.status);
+                
+                return `
+                    <div class="task-row" data-task-id="${task.id}">
+                        <div class="task-info">
+                            <div class="task-name">${task.name}</div>
+                            <div class="task-meta">
+                                <span>📅 ${this.formatDate(new Date(task.startDate))} - ${this.formatDate(new Date(task.endDate))}</span>
+                                <span>📊 ${task.progress}%</span>
+                            </div>
+                        </div>
+                        <div class="task-pic">
+                            <div class="pic-avatar" style="background-color: ${this.getAvatarColor(task.pic)}">${initials}</div>
+                            <div class="status-indicator ${statusColor}"></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderTimeline() {
+                this.renderTimelineHeader();
+                this.renderTimelineGrid();
+            }
+
+            renderTimelineHeader() {
+                const monthsContainer = $('#timeline-months');
+                const weeksContainer = $('#timeline-weeks');
+                monthsContainer.empty();
+                weeksContainer.empty();
+
+                const totalDays = Math.ceil((this.timelineEnd - this.timelineStart) / (1000 * 60 * 60 * 24));
+                const timelineWidth = totalDays * this.dayWidth;
+
+                // Render months
+                let currentDate = new Date(this.timelineStart);
+                let currentPosition = 0;
+
+                while (currentDate < this.timelineEnd) {
+                    const monthStart = new Date(currentDate);
+                    const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+                    const monthEndClamped = monthEnd > this.timelineEnd ? this.timelineEnd : monthEnd;
+                    
+                    const monthDays = Math.ceil((monthEndClamped - monthStart) / (1000 * 60 * 60 * 24));
+                    const monthWidth = monthDays * this.dayWidth;
+
+                    monthsContainer.append(`
+                        <div class="month-header" style="width: ${monthWidth}px;">
+                            ${monthStart.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                        </div>
+                    `);
+
+                    currentDate.setMonth(currentDate.getMonth() + 1);
+                    currentDate.setDate(1);
+                }
+
+                // Render weeks
+                currentDate = new Date(this.timelineStart);
+                while (currentDate < this.timelineEnd) {
+                    const weekStart = new Date(currentDate);
+                    const weekEnd = new Date(currentDate);
+                    weekEnd.setDate(weekEnd.getDate() + 6);
+                    const weekEndClamped = weekEnd > this.timelineEnd ? this.timelineEnd : weekEnd;
+                    
+                    const weekDays = Math.ceil((weekEndClamped - weekStart) / (1000 * 60 * 60 * 24));
+                    const weekWidth = weekDays * this.dayWidth;
+                    const isWeekend = weekStart.getDay() === 0 || weekStart.getDay() === 6;
+
+                    weeksContainer.append(`
+                        <div class="week-header ${isWeekend ? 'weekend' : ''}" style="width: ${weekWidth}px;">
+                            ${weekStart.getDate()}
+                        </div>
+                    `);
+
+                    currentDate.setDate(currentDate.getDate() + 7);
+                }
+            }
+
+            renderTimelineGrid() {
+                const container = $('#timeline-grid');
+                container.find('.timeline-row, .phase-timeline-row').remove();
+
+                this.data.phases.forEach(phase => {
+                    // Add phase header row
+                    container.append(`<div class="phase-timeline-row" data-phase-id="${phase.id}"></div>`);
+                    
+                    // Add task rows
+                    phase.tasks.forEach(task => {
+                        const row = $(`<div class="timeline-row" data-task-id="${task.id}"></div>`);
+                        
+                        const ganttBar = this.createGanttBar(task);
+                        row.append(ganttBar);
+                        
+                        container.append(row);
+                    });
+                });
+            }
+
+            createGanttBar(task) {
+                const startDate = new Date(task.startDate);
+                const endDate = new Date(task.endDate);
+                const daysSinceStart = Math.floor((startDate - this.timelineStart) / (1000 * 60 * 60 * 24));
+                const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                
+                const left = daysSinceStart * this.dayWidth;
+                const width = duration * this.dayWidth;
+                
+                const statusClass = this.getStatusClass(task.status);
+                const progressStyle = task.status === 'in-progress' ? `--progress: ${task.progress}%` : '';
+
+                return $(`
+                    <div class="gantt-bar ${statusClass}" 
+                         style="left: ${left}px; width: ${width}px; ${progressStyle}"
+                         data-task-id="${task.id}">
+                        <span>${task.name}</span>
+                        <span class="progress-text">${task.progress}%</span>
+                    </div>
+                `);
+            }
+
+            renderDependencies() {
+                const svg = $('.dependency-lines');
+                svg.empty();
+
+                // Create a map of task positions for dependency drawing
+                const taskPositions = {};
+                $('.timeline-row').each((index, row) => {
+                    const taskId = $(row).data('task-id');
+                    const rect = row.getBoundingClientRect();
+                    const containerRect = $('.timeline-grid')[0].getBoundingClientRect();
+                    taskPositions[taskId] = {
+                        top: rect.top - containerRect.top + rect.height / 2,
+                        left: rect.left - containerRect.left
+                    };
+                });
+
+                // Draw dependency lines
+                this.data.phases.forEach(phase => {
+                    phase.tasks.forEach(task => {
+                        task.dependencies.forEach(depId => {
+                            const depTask = this.findTaskById(depId);
+                            if (depTask && taskPositions[task.id] && taskPositions[depId]) {
+                                this.drawDependencyLine(svg, taskPositions[depId], taskPositions[task.id]);
+                            }
+                        });
+                    });
+                });
+            }
+
+            drawDependencyLine(svg, from, to) {
+                const path = `M ${from.left} ${from.top} L ${to.left} ${to.top}`;
+                svg.append(`
+                    <path class="dependency-line" d="${path}" marker-end="url(#arrowhead)"/>
+                `);
+
+                // Add arrowhead marker if not exists
+                if (svg.find('defs').length === 0) {
+                    svg.prepend(`
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                                    refX="9" refY="3.5" orient="auto">
+                                <polygon class="dependency-arrow" points="0 0, 10 3.5, 0 7"/>
+                            </marker>
+                        </defs>
+                    `);
+                }
+            }
+
+            bindEvents() {
+                // Phase toggle
+                $(document).on('click', '.phase-header', (e) => {
+                    const phaseGroup = $(e.currentTarget).closest('.phase-group');
+                    phaseGroup.toggleClass('collapsed');
+                });
+
+                // Calendar navigation
+                $('#prev-month').on('click', () => {
+                    this.calendarDate.setMonth(this.calendarDate.getMonth() - 1);
+                    this.renderCalendar();
+                });
+
+                $('#next-month').on('click', () => {
+                    this.calendarDate.setMonth(this.calendarDate.getMonth() + 1);
+                    this.renderCalendar();
+                });
+
+                // Task click for modal
+                $(document).on('click', '.task-row, .gantt-bar', (e) => {
+                    const taskId = $(e.currentTarget).data('task-id');
+                    const task = this.findTaskById(taskId);
+                    if (task) {
+                        this.showTaskModal(task);
+                    }
+                });
+
+                // Tooltip events
+                $(document).on('mouseenter', '.gantt-bar', (e) => {
+                    const taskId = $(e.currentTarget).data('task-id');
+                    const task = this.findTaskById(taskId);
+                    if (task) {
+                        this.showTooltip(e, task);
+                    }
+                });
+
+                $(document).on('mouseleave', '.gantt-bar', () => {
+                    this.hideTooltip();
+                });
+
+                // Modal close
+                $('#modal-close, #modal-overlay').on('click', (e) => {
+                    if (e.target === e.currentTarget) {
+                        this.hideTaskModal();
+                    }
+                });
+
+                // Escape key to close modal
+                $(document).on('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.hideTaskModal();
+                    }
+                });
+
+                // Timeline sync scroll
+                $('.timeline-panel').on('scroll', () => {
+                    // Sync horizontal scroll if needed
+                });
+            }
+
+            showTooltip(event, task) {
+                const tooltip = $('#tooltip');
+                const dependencies = task.dependencies.map(depId => {
+                    const depTask = this.findTaskById(depId);
+                    return depTask ? depTask.name : depId;
+                }).join(', ');
+
+                $('#tooltip-title').text(task.name);
+                $('#tooltip-content').html(`
+                    <div><strong>PIC:</strong> ${task.pic}</div>
+                    <div><strong>Progress:</strong> ${task.progress}%</div>
+                    <div><strong>Status:</strong> ${this.formatStatus(task.status)}</div>
+                    <div><strong>Duration:</strong> ${this.formatDate(new Date(task.startDate))} - ${this.formatDate(new Date(task.endDate))}</div>
+                    ${dependencies ? `<div><strong>Dependencies:</strong> ${dependencies}</div>` : ''}
+                    ${task.description ? `<div><strong>Description:</strong> ${task.description}</div>` : ''}
+                `);
+
+                tooltip.css({
+                    left: event.pageX + 10,
+                    top: event.pageY - 10
+                }).addClass('show');
+            }
+
+            hideTooltip() {
+                $('#tooltip').removeClass('show');
+            }
+
+            showTaskModal(task) {
+                const dependencies = task.dependencies.map(depId => {
+                    const depTask = this.findTaskById(depId);
+                    return depTask ? depTask.name : depId;
+                });
+
+                $('#modal-title').text(task.name);
+                $('#modal-content').html(`
+                    <div class="info-row">
+                        <div class="info-label">Status</div>
+                        <div class="info-value">
+                            <span class="status-indicator ${this.getStatusColor(task.status)}"></span>
+                            ${this.formatStatus(task.status)}
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Progress</div>
+                        <div class="info-value">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${task.progress}%"></div>
+                            </div>
+                            ${task.progress}%
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">PIC</div>
+                        <div class="info-value">${task.pic}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Start Date</div>
+                        <div class="info-value">${this.formatDate(new Date(task.startDate))}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">End Date</div>
+                        <div class="info-value">${this.formatDate(new Date(task.endDate))}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Duration</div>
+                        <div class="info-value">${Math.ceil((new Date(task.endDate) - new Date(task.startDate)) / (1000 * 60 * 60 * 24))} days</div>
+                    </div>
+                    ${dependencies.length > 0 ? `
+                        <div class="info-row">
+                            <div class="info-label">Dependencies</div>
+                            <div class="info-value">${dependencies.join(', ')}</div>
+                        </div>
+                    ` : ''}
+                    ${task.description ? `
+                        <div class="info-row">
+                            <div class="info-label">Description</div>
+                            <div class="info-value">${task.description}</div>
+                        </div>
+                    ` : ''}
+                `);
+
+                $('#modal-overlay').css('display', 'flex');
+            }
+
+            hideTaskModal() {
+                $('#modal-overlay').hide();
+            }
+
+            // Utility methods
+            findTaskById(taskId) {
+                for (const phase of this.data.phases) {
+                    for (const task of phase.tasks) {
+                        if (task.id === taskId) {
+                            return task;
+                        }
+                    }
+                }
+                return null;
+            }
+
+            getStatusColor(status) {
+                const colors = {
+                    'completed': 'status-completed',
+                    'in-progress': 'status-in-progress',
+                    'not-started': 'status-not-started',
+                    'overdue': 'status-overdue'
+                };
+                return colors[status] || 'status-not-started';
+            }
+
+            getStatusClass(status) {
+                return status.replace('-', '-');
+            }
+
+            getAvatarColor(name) {
+                const colors = ['#0052CC', '#00A86B', '#DE350B', '#8777D9', '#FF8B00'];
+                const hash = name.split('').reduce((a, b) => {
+                    a = ((a << 5) - a) + b.charCodeAt(0);
+                    return a & a;
+                }, 0);
+                return colors[Math.abs(hash) % colors.length];
+            }
+
+            formatDate(date) {
+                return date.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+            }
+
+            formatStatus(status) {
+                return status.split('-').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1)
+                ).join(' ');
+            }
+
+            isSameDay(date1, date2) {
+                return date1.toDateString() === date2.toDateString();
+            }
+
+            isMilestone(date) {
+                // Check if date is a milestone (task end date)
+                return this.data.phases.some(phase => 
+                    phase.tasks.some(task => 
+                        this.isSameDay(new Date(task.endDate), date)
+                    )
+                );
+            }
+        }
+
+        // Initialize the Gantt Chart when DOM is ready
+        $(document).ready(() => {
+            const ganttChart = new GanttChart(projectData);
+        });
+    </script>
+</body>
+</html>
