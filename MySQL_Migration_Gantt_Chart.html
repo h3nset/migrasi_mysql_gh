@@ -584,23 +584,18 @@
 
     <script>
         $(document).ready(function() {
-            // Mark current week (assuming we're in early July 2025 - week 12)
-            $('.gantt-row .gantt-cell:nth-child(13)').addClass('current-week');
+            // Mark current week (Juli 2025 - week 9 since project start)
+            // Week 9 corresponds to column 10 (task name = column 1, so week 9 = column 10)
+            $('.gantt-header .week-header:nth-child(10)').addClass('current-week');
+            $('.gantt-row .gantt-cell:nth-child(10)').addClass('current-week');
 
             // Add click functionality to tasks
             $('.gantt-row').click(function() {
                 const taskName = $(this).find('.task-name').text().trim();
-                alert(`Task: ${taskName}\nKlik untuk detail lebih lanjut atau update progress.`);
+                if (taskName.includes('Milestone') || taskName.includes('FASE')) {
+                    alert(`${taskName}\nKlik untuk detail atau update progress.`);
+                }
             });
-
-            // Add current date indicator
-            const currentDate = new Date();
-            const projectStart = new Date('2025-05-01');
-            const weeksPassed = Math.floor((currentDate - projectStart) / (7 * 24 * 60 * 60 * 1000));
-            
-            if (weeksPassed >= 0 && weeksPassed < 32) {
-                $(`.gantt-cell:nth-child(${weeksPassed + 2})`).addClass('current-week');
-            }
 
             // Responsive adjustments
             function adjustForMobile() {
