@@ -65,7 +65,7 @@ Project migrasi MySQL ini bertujuan untuk mengupgrade infrastruktur database dar
 
 ### 🏗️ **FASE 2: INFRASTRUCTURE DEVELOPMENT**
 **Periode:** Agustus 2025 - Oktober 2025 (3 bulan)  
-**Status:** 🎯 Planned  
+**Status:** ⬜ Planned  
 **PIC:** Vendor + Tim Infrastructure
 
 #### Minggu ke 13-16 (Agustus 2025)
