@@ -647,16 +647,6 @@
 
     <script>
         $(document).ready(function() {
-            // Add hover effects and tooltips
-            $('.gantt-bar').hover(
-                function() {
-                    $(this).css('z-index', '10');
-                },
-                function() {
-                    $(this).css('z-index', '1');
-                }
-            );
-
             // Mark current week (assuming we're in early July 2025 - week 12)
             $('.gantt-row .gantt-cell:nth-child(13)').addClass('current-week');
 
@@ -665,11 +655,6 @@
                 const taskName = $(this).find('.task-name').text().trim();
                 alert(`Task: ${taskName}\nKlik untuk detail lebih lanjut atau update progress.`);
             });
-
-            // Simulate progress animation
-            setTimeout(function() {
-                $('.fase-1 .gantt-bar').addClass('completed');
-            }, 1000);
 
             // Add current date indicator
             const currentDate = new Date();
@@ -690,22 +675,6 @@
 
             adjustForMobile();
             $(window).resize(adjustForMobile);
-
-            // Add interactive features
-            $('.milestone').click(function() {
-                $(this).animate({
-                    transform: 'scale(1.3)'
-                }, 200).animate({
-                    transform: 'scale(1)'
-                }, 200);
-            });
-
-            // Progress tracking
-            $('.gantt-bar').each(function(index) {
-                setTimeout(() => {
-                    $(this).css('opacity', '0').animate({opacity: 1}, 500);
-                }, index * 100);
-            });
         });
     </script>
 </body>
