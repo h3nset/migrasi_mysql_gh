@@ -138,7 +138,7 @@ Project migrasi MySQL ini bertujuan untuk mengupgrade infrastruktur database dar
 
 ### 🧪 **FASE 4: TESTING & APPLICATION REFINEMENT**
 **Periode:** Desember 2025 Week 1-3 (3 minggu)  
-**Status:** 🎯 Planned  
+**Status:** ⬜ Planned  
 **PIC:** Tim Development (Lead) + Tim QA
 
 #### Minggu ke 29-30 (Desember Week 1-2)
