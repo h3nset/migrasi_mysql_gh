@@ -188,12 +188,12 @@ Project migrasi MySQL ini bertujuan untuk mengupgrade infrastruktur database dar
 
 | Metric | Target | Current Status |
 |--------|--------|----------------|
-| **Budget Approval** | Juli 2025 | 🎯 On Track |
-| **Infrastructure Ready** | Oktober 2025 | 🎯 On Track |
-| **Migration Complete** | November 2025 | 🎯 Planned |
-| **Zero Data Loss** | 100% | 🎯 Target |
-| **Performance Improvement** | ≥20% | 🎯 Target |
-| **Downtime** | ≤4 hours | 🎯 Target |
+| **Budget Approval** | Juli 2025 | 🔄 In Progress |
+| **Infrastructure Ready** | Oktober 2025 | ⬜ Pending |
+| **Migration Complete** | November 2025 | ⬜ Pending |
+| **Zero Data Loss** | 100% | ⬜ Target |
+| **Performance Improvement** | ≥20% | ⬜ Target |
+| **Downtime** | ≤4 hours | ⬜ Target |
 
 ---
 
