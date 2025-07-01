@@ -106,7 +106,7 @@ Project migrasi MySQL ini bertujuan untuk mengupgrade infrastruktur database dar
 
 ### 🔄 **FASE 3: MIGRATION & UPGRADE**
 **Periode:** November 2025 (1 bulan)  
-**Status:** 🎯 Planned  
+**Status:** ⬜ Planned  
 **PIC:** Vendor (Lead) + Tim AMS (Support)
 
 #### Minggu ke 25-26 (November Week 1-2)
