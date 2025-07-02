@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL Migration Project - Simple Gantt View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .project-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .phase-section {
+            margin-bottom: 30px;
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .phase-header {
+            padding: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .gantt-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .gantt-table th,
+        .gantt-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 12px;
+        }
+        
+        .gantt-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .task-name {
+            min-width: 200px;
+            font-weight: bold;
+        }
+        
+        .task-dates {
+            min-width: 120px;
+        }
+        
+        .progress-bar {
+            width: 100px;
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-in-progress {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-not-started {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .timeline-visual {
+            width: 300px;
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .timeline-bar {
+            height: 100%;
+            border-radius: 3px;
+            position: absolute;
+        }
+        
+        .pic-info {
+            font-style: italic;
+            color: #6c757d;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="project-header">
+        <h1>Migrasi MySQL Enterprise Edition ke Versi 8.4</h1>
+        <p>Project Timeline: May 1, 2025 - December 31, 2025</p>
+        <p><strong>Current Date: July 2, 2025</strong></p>
+    </div>
+
+    <!-- FASE 1: PERSIAPAN & PLANNING -->
+    <div class="phase-section">
+        <div class="phase-header" style="background-color: #1976D2;">
+            FASE 1: PERSIAPAN & PLANNING
+        </div>
+        <table class="gantt-table">
+            <thead>
+                <tr>
+                    <th class="task-name">Task Name</th>
+                    <th class="task-dates">Start - End Date</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                    <th>PIC</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="task-name">Assessment & Audit</td>
+                    <td class="task-dates">2025-05-01 to 2025-05-28</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%; background-color: #28a745;"></div>
+                            <div class="progress-text">100%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-completed">Completed</span></td>
+                    <td class="pic-info">Tim DBA + Vendor</td>
+                    <td>Analisis infrastructure existing - Infrastructure Assessment Report</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Breaking Changes Analysis</td>
+                    <td class="task-dates">2025-05-01 to 2025-05-28</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%; background-color: #28a745;"></div>
+                            <div class="progress-text">100%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-completed">Completed</span></td>
+                    <td class="pic-info">Tim Development</td>
+                    <td>Identifikasi compatibility issues - Breaking Changes Checklist</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Cluster Topology Planning</td>
+                    <td class="task-dates">2025-05-01 to 2025-05-28</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%; background-color: #28a745;"></div>
+                            <div class="progress-text">100%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-completed">Completed</span></td>
+                    <td class="pic-info">Tim Infrastructure</td>
+                    <td>Design arsitektur target - Topology Blueprint</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Vendor Evaluation</td>
+                    <td class="task-dates">2025-06-01 to 2025-06-28</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%; background-color: #28a745;"></div>
+                            <div class="progress-text">100%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-completed">Completed</span></td>
+                    <td class="pic-info">Procurement Team</td>
+                    <td>Shortlist 3 vendor terbaik - Vendor Comparison Matrix</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Budgeting & Cost Analysis</td>
+                    <td class="task-dates">2025-06-01 to 2025-06-28</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%; background-color: #28a745;"></div>
+                            <div class="progress-text">100%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-completed">Completed</span></td>
+                    <td class="pic-info">Finance Team</td>
+                    <td>Finalisasi budget requirements - Detailed Budget Proposal</td>
+                </tr>
+                <tr style="background-color: #fff3cd;">
+                    <td class="task-name">Application Compatibility Testing</td>
+                    <td class="task-dates">2025-06-01 to 2025-07-15</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%; background-color: #ffc107;"></div>
+                            <div class="progress-text">75%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-in-progress">In Progress</span></td>
+                    <td class="pic-info">Tim Development</td>
+                    <td>Test compatibility aplikasi - Compatibility Report (CURRENT)</td>
+                </tr>
+                <tr style="background-color: #fff3cd;">
+                    <td class="task-name">BOD Presentation & Budget Approval</td>
+                    <td class="task-dates">2025-07-01 to 2025-07-15</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 50%; background-color: #ffc107;"></div>
+                            <div class="progress-text">50%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-in-progress">In Progress</span></td>
+                    <td class="pic-info">Management</td>
+                    <td>Presentasi ke Board of Directors - Budget Approval</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Vendor Selection & Contract</td>
+                    <td class="task-dates">2025-07-15 to 2025-07-31</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Procurement</td>
+                    <td>Tender & Finalisasi kontrak vendor - Signed Contract</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Rollback Plan Development</td>
+                    <td class="task-dates">2025-07-15 to 2025-07-31</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Tim DBA</td>
+                    <td>Strategi contingency - Rollback Procedure</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- FASE 2: INFRASTRUCTURE DEVELOPMENT -->
+    <div class="phase-section">
+        <div class="phase-header" style="background-color: #4CAF50;">
+            FASE 2: INFRASTRUCTURE DEVELOPMENT
+        </div>
+        <table class="gantt-table">
+            <thead>
+                <tr>
+                    <th class="task-name">Task Name</th>
+                    <th class="task-dates">Start - End Date</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                    <th>PIC</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="task-name">Hardware Procurement</td>
+                    <td class="task-dates">2025-08-01 to 2025-08-14</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Vendor + Tim Infrastructure</td>
+                    <td>Order NetApp, Sun Switch, Servers - Purchase Orders</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Site Preparation</td>
+                    <td class="task-dates">2025-08-15 to 2025-08-31</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Tim Infrastructure</td>
+                    <td>Prepare datacenter space - Site Ready</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Hardware Delivery & Installation</td>
+                    <td class="task-dates">2025-09-01 to 2025-09-28</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Vendor</td>
+                    <td>Equipment delivery & installation - Hardware Commissioned</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Network Configuration</td>
+                    <td class="task-dates">2025-09-15 to 2025-09-30</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Vendor + Tim Infrastructure</td>
+                    <td>Configure switches & connectivity - Network Ready</td>
+                </tr>
+                <tr>
+                    <td class="task-name">MySQL Installation & Configuration</td>
+                    <td class="task-dates">2025-10-01 to 2025-10-15</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Vendor</td>
+                    <td>Install MySQL 8.4 Enterprise - MySQL Environment Ready</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Performance Tuning & Testing</td>
+                    <td class="task-dates">2025-10-16 to 2025-10-31</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Vendor + Tim DBA</td>
+                    <td>Optimize database settings & testing - Infrastructure Sign-off</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- FASE 3: MIGRATION & UPGRADE -->
+    <div class="phase-section">
+        <div class="phase-header" style="background-color: #F44336;">
+            FASE 3: MIGRATION & UPGRADE
+        </div>
+        <table class="gantt-table">
+            <thead>
+                <tr>
+                    <th class="task-name">Task Name</th>
+                    <th class="task-dates">Start - End Date</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                    <th>PIC</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="task-name">Pre-Migration Backup</td>
+                    <td class="task-dates">2025-11-01 to 2025-11-07</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">DBA Team</td>
+                    <td>Full backup existing data - Backup Confirmation</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Data Migration Execution</td>
+                    <td class="task-dates">2025-11-08 to 2025-11-14</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Vendor + DBA Team</td>
+                    <td>Migrate data to MySQL 8.4 - Migration Complete</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Schema Upgrade</td>
+                    <td class="task-dates">2025-11-08 to 2025-11-14</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Vendor + Development Team</td>
+                    <td>Update database schemas - Schema Updated</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Data Validation</td>
+                    <td class="task-dates">2025-11-15 to 2025-11-21</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">DBA + QA Team</td>
+                    <td>Verify data integrity - Validation Report</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Performance Testing & Go/No-Go</td>
+                    <td class="task-dates">2025-11-22 to 2025-11-30</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Vendor + All Teams</td>
+                    <td>Test system performance & migration validation - Sign-off Document</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- FASE 4: TESTING & APPLICATION REFINEMENT -->
+    <div class="phase-section">
+        <div class="phase-header" style="background-color: #9C27B0;">
+            FASE 4: TESTING & APPLICATION REFINEMENT
+        </div>
+        <table class="gantt-table">
+            <thead>
+                <tr>
+                    <th class="task-name">Task Name</th>
+                    <th class="task-dates">Start - End Date</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                    <th>PIC</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="task-name">Application Testing & Bug Fixing</td>
+                    <td class="task-dates">2025-12-01 to 2025-12-14</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Tim Development + QA</td>
+                    <td>Test all applications & fix issues - Bug-free Applications</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Performance Optimization</td>
+                    <td class="task-dates">2025-12-08 to 2025-12-14</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Tim Development</td>
+                    <td>Optimize application performance - Optimized Code</td>
+                </tr>
+                <tr>
+                    <td class="task-name">User Acceptance Testing</td>
+                    <td class="task-dates">2025-12-15 to 2025-12-21</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">End Users + QA Team</td>
+                    <td>End-user validation - UAT Sign-off</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Documentation & Training</td>
+                    <td class="task-dates">2025-12-15 to 2025-12-21</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">All Teams</td>
+                    <td>Update documentation & train teams - Training Complete</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- FASE 5: GO-LIVE & PROJECT CLOSURE -->
+    <div class="phase-section">
+        <div class="phase-header" style="background-color: #FF9800;">
+            FASE 5: GO-LIVE & PROJECT CLOSURE
+        </div>
+        <table class="gantt-table">
+            <thead>
+                <tr>
+                    <th class="task-name">Task Name</th>
+                    <th class="task-dates">Start - End Date</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                    <th>PIC</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="task-name">Production Cutover</td>
+                    <td class="task-dates">2025-12-22 to 2025-12-25</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Project Manager + All Teams</td>
+                    <td>Switch to new environment - Production Live</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Post Go-Live Monitoring</td>
+                    <td class="task-dates">2025-12-25 to 2025-12-28</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">All Teams</td>
+                    <td>24/7 monitoring first 72 hours - Stability Confirmed</td>
+                </tr>
+                <tr>
+                    <td class="task-name">Project Closure & Documentation</td>
+                    <td class="task-dates">2025-12-29 to 2025-12-31</td>
+                    <td>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%; background-color: #dc3545;"></div>
+                            <div class="progress-text">0%</div>
+                        </div>
+                    </td>
+                    <td><span class="status status-not-started">Not Started</span></td>
+                    <td class="pic-info">Project Manager</td>
+                    <td>Document lessons learned - Project Closure Report</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 30px; padding: 20px; background-color: #e9ecef; border-radius: 5px;">
+        <h3>Legend:</h3>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div><span class="status status-completed">Completed</span> - Task finished</div>
+            <div><span class="status status-in-progress">In Progress</span> - Currently working on</div>
+            <div><span class="status status-not-started">Not Started</span> - Future task</div>
+        </div>
+        <p style="margin-top: 10px; font-style: italic; color: #6c757d;">
+            Note: Tasks highlighted in yellow background are currently active as of July 2, 2025.
+        </p>
+    </div>
+</body>
+</html>
