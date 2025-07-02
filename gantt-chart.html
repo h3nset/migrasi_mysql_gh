@@ -3,21 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Gantt Chart - MySQL Migration</title>
+    <title>MySQL Migration - Gantt Chart</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Material+Icons&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-blue: #0052CC;
-            --dark-blue: #253858;
-            --completed-green: #00A86B;
-            --in-progress-blue: #0052CC;
-            --not-started-gray: #DFE1E6;
-            --overdue-red: #DE350B;
-            --light-gray: #F4F5F7;
-            --border-gray: #DFE1E6;
-            --text-dark: #172B4D;
-            --text-medium: #5E6C84;
-            --white: #FFFFFF;
+            /* Material Design Colors */
+            --md-primary: #1976D2;
+            --md-primary-variant: #1565C0;
+            --md-secondary: #03DAC6;
+            --md-secondary-variant: #018786;
+            --md-background: #FAFAFA;
+            --md-surface: #FFFFFF;
+            --md-error: #B00020;
+            --md-on-primary: #FFFFFF;
+            --md-on-secondary: #000000;
+            --md-on-background: #000000;
+            --md-on-surface: #000000;
+            --md-on-error: #FFFFFF;
+            
+            /* Status Colors */
+            --status-completed: #4CAF50;
+            --status-in-progress: #2196F3;
+            --status-not-started: #E0E0E0;
+            --status-overdue: #F44336;
+            
+            /* Elevations */
+            --elevation-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --elevation-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+            --elevation-3: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            --elevation-4: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            
+            /* Text Colors */
+            --text-primary: rgba(0,0,0,0.87);
+            --text-secondary: rgba(0,0,0,0.60);
+            --text-disabled: rgba(0,0,0,0.38);
+            --text-hint: rgba(0,0,0,0.38);
+            
+            /* Dividers */
+            --divider: rgba(0,0,0,0.12);
+            
+            /* Layout */
+            --sidebar-width: 380px;
+            --header-height: 80px;
+            --timeline-header-height: 120px;
         }
 
         * {
@@ -27,376 +56,580 @@
         }
 
         body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
-            background-color: var(--light-gray);
-            color: var(--text-dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--md-background);
+            color: var(--text-primary);
             line-height: 1.5;
+            overflow: hidden;
+            height: 100vh;
         }
 
-        .gantt-container {
-            max-width: 100%;
-            background: var(--white);
-            box-shadow: 0 2px 8px rgba(23, 43, 77, 0.12);
+        /* Material Design Ripple Effect */
+        .md-ripple {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
         }
 
-        /* Header Section */
-        .gantt-header {
-            background: var(--white);
-            border-bottom: 2px solid var(--border-gray);
-            padding: 20px 24px;
+        .md-ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .md-ripple:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        /* Main Container */
+        .gantt-app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: var(--md-background);
+        }
+
+        /* Header */
+        .app-header {
+            background: var(--md-surface);
+            box-shadow: var(--elevation-2);
+            padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 100;
+            min-height: var(--header-height);
         }
 
-        .project-info h1 {
-            font-size: 28px;
+        .project-title {
+            font-size: 24px;
             font-weight: 600;
-            color: var(--dark-blue);
-            margin-bottom: 8px;
+            color: var(--text-primary);
+            margin: 0;
         }
 
-        .project-meta {
-            display: flex;
-            gap: 24px;
+        .project-subtitle {
             font-size: 14px;
-            color: var(--text-medium);
+            color: var(--text-secondary);
+            margin-top: 4px;
         }
 
-        .mini-calendar {
-            background: var(--light-gray);
-            padding: 16px;
-            border: 1px solid var(--border-gray);
-            min-width: 280px;
-        }
-
-        .calendar-header {
+        .header-actions {
             display: flex;
-            justify-content: space-between;
+            gap: 16px;
             align-items: center;
-            margin-bottom: 12px;
         }
 
-        .calendar-nav {
+        .current-date {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--md-primary);
+            color: var(--md-on-primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: var(--md-surface);
+            border-radius: 24px;
+            padding: 4px;
+            box-shadow: var(--elevation-1);
+        }
+
+        .view-toggle button {
             background: none;
             border: none;
-            color: var(--primary-blue);
+            padding: 8px 16px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 18px;
-            padding: 4px 8px;
-            transition: background-color 0.2s;
-        }
-
-        .calendar-nav:hover {
-            background: var(--border-gray);
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 1px;
-            text-align: center;
-            font-size: 12px;
-        }
-
-        .calendar-day {
-            padding: 6px 4px;
-            background: var(--white);
-            border: 1px solid transparent;
-            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
             transition: all 0.2s;
+            color: var(--text-secondary);
         }
 
-        .calendar-day:hover {
-            background: var(--primary-blue);
-            color: var(--white);
+        .view-toggle button.active {
+            background: var(--md-primary);
+            color: var(--md-on-primary);
+            box-shadow: var(--elevation-1);
         }
 
-        .calendar-day.today {
-            background: var(--completed-green);
-            color: var(--white);
-            font-weight: 600;
-        }
-
-        .calendar-day.milestone {
-            background: var(--overdue-red);
-            color: var(--white);
-        }
-
-        /* Main Content Area */
-        .gantt-main {
+        /* Main Content */
+        .gantt-content {
             display: flex;
-            height: calc(100vh - 140px);
+            flex: 1;
             overflow: hidden;
         }
 
-        /* Task List Panel */
-        .task-list-panel {
-            width: 400px;
-            background: var(--white);
-            border-right: 2px solid var(--border-gray);
-            overflow-y: auto;
+        /* Sidebar */
+        .task-sidebar {
+            width: var(--sidebar-width);
+            background: var(--md-surface);
+            border-right: 1px solid var(--divider);
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--elevation-1);
+            z-index: 50;
         }
 
+        .sidebar-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--divider);
+            background: var(--md-surface);
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .task-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        /* Phase Groups */
         .phase-group {
-            border-bottom: 1px solid var(--border-gray);
+            border-bottom: 1px solid var(--divider);
         }
 
         .phase-header {
-            background: var(--dark-blue);
-            color: var(--white);
-            padding: 16px 20px;
-            cursor: pointer;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            font-weight: 600;
-            font-size: 16px;
-            transition: background-color 0.2s;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: var(--md-surface);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid var(--md-primary);
         }
 
         .phase-header:hover {
-            background: #1e2f4a;
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        .phase-info {
+            flex: 1;
+        }
+
+        .phase-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .phase-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 12px;
         }
 
         .phase-toggle {
-            font-size: 14px;
             transition: transform 0.2s;
+            color: var(--text-secondary);
         }
 
         .phase-group.collapsed .phase-toggle {
             transform: rotate(-90deg);
         }
 
-        .phase-meta {
-            font-size: 12px;
-            font-weight: 400;
-            opacity: 0.8;
-        }
-
-        .task-list {
-            background: var(--white);
-        }
-
-        .phase-group.collapsed .task-list {
+        .phase-group.collapsed .phase-tasks {
             display: none;
         }
 
+        .phase-tasks {
+            background: var(--md-background);
+        }
+
+        /* Task Rows */
         .task-row {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-gray);
-            cursor: pointer;
-            transition: background-color 0.2s;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            padding: 12px 20px 12px 44px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .task-row:hover {
-            background: var(--light-gray);
+            background: rgba(0, 0, 0, 0.04);
         }
 
         .task-info {
             flex: 1;
+            min-width: 0;
         }
 
         .task-name {
+            font-size: 14px;
             font-weight: 500;
+            color: var(--text-primary);
             margin-bottom: 4px;
-            color: var(--text-dark);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        .task-meta {
-            font-size: 12px;
-            color: var(--text-medium);
+        .task-details {
             display: flex;
             gap: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
         }
 
-        .task-pic {
+        .task-status {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .pic-avatar {
-            width: 32px;
-            height: 32px;
-            background: var(--primary-blue);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-indicator {
+        .status-dot {
             width: 8px;
             height: 8px;
-            margin-left: 8px;
+            border-radius: 50%;
         }
 
-        .status-completed { background: var(--completed-green); }
-        .status-in-progress { background: var(--in-progress-blue); }
-        .status-not-started { background: var(--not-started-gray); }
-        .status-overdue { background: var(--overdue-red); }
+        .status-completed .status-dot { background: var(--status-completed); }
+        .status-in-progress .status-dot { background: var(--status-in-progress); }
+        .status-not-started .status-dot { background: var(--status-not-started); }
+        .status-overdue .status-dot { background: var(--status-overdue); }
+
+        .task-progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-circle {
+            width: 32px;
+            height: 32px;
+            position: relative;
+        }
+
+        .progress-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle .progress-bg {
+            fill: none;
+            stroke: var(--divider);
+            stroke-width: 2;
+        }
+
+        .progress-circle .progress-fill {
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.3s ease;
+        }
+
+        .progress-circle.completed .progress-fill { stroke: var(--status-completed); }
+        .progress-circle.in-progress .progress-fill { stroke: var(--status-in-progress); }
+        .progress-circle.not-started .progress-fill { stroke: var(--status-not-started); }
 
         /* Timeline Panel */
         .timeline-panel {
             flex: 1;
-            background: var(--white);
-            overflow: auto;
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--md-surface);
         }
 
         .timeline-header {
-            background: var(--light-gray);
-            border-bottom: 1px solid var(--border-gray);
-            height: 80px;
+            background: var(--md-surface);
+            border-bottom: 1px solid var(--divider);
+            min-height: var(--timeline-header-height);
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 40;
+            box-shadow: var(--elevation-1);
         }
 
         .timeline-months {
             display: flex;
-            height: 40px;
-            border-bottom: 1px solid var(--border-gray);
+            height: 60px;
+            border-bottom: 1px solid var(--divider);
         }
 
         .timeline-weeks {
             display: flex;
-            height: 40px;
+            height: 60px;
         }
 
-        .month-header, .week-header {
-            border-right: 1px solid var(--border-gray);
+        .month-header {
+            background: linear-gradient(135deg, var(--md-primary) 0%, var(--md-primary-variant) 100%);
+            color: var(--md-on-primary);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            font-size: 12px;
-            background: var(--light-gray);
+            font-size: 13px;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
         }
 
-        .month-header {
-            background: var(--dark-blue);
-            color: var(--white);
+        .week-header {
+            background: var(--md-background);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 500;
+            border-right: 1px solid var(--divider);
+            transition: all 0.2s;
+        }
+
+        .week-header:hover {
+            background: rgba(0, 0, 0, 0.04);
         }
 
         .week-header.weekend {
-            background: #f8f9fa;
-            color: var(--text-medium);
+            background: rgba(0, 0, 0, 0.02);
+            color: var(--text-disabled);
+        }
+
+        .week-header.today {
+            background: var(--md-secondary);
+            color: var(--md-on-secondary);
+            font-weight: 600;
+        }
+
+        /* Timeline Grid */
+        .timeline-content {
+            flex: 1;
+            overflow: auto;
+            position: relative;
         }
 
         .timeline-grid {
             position: relative;
-            min-height: 600px;
+            min-height: 100%;
         }
 
         .timeline-row {
-            height: 60px;
-            border-bottom: 1px solid var(--border-gray);
+            height: 56px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             position: relative;
+            transition: background-color 0.2s;
+        }
+
+        .timeline-row:hover {
+            background: rgba(0, 0, 0, 0.02);
         }
 
         .phase-timeline-row {
-            height: 60px;
-            background: #f8f9fa;
-            border-bottom: 1px solid var(--border-gray);
+            height: 56px;
+            background: linear-gradient(90deg, rgba(25, 118, 210, 0.05) 0%, transparent 100%);
+            border-bottom: 1px solid var(--divider);
+            position: relative;
         }
 
+        .phase-timeline-row::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--md-primary);
+        }
+
+        /* Gantt Bars */
         .gantt-bar {
             position: absolute;
-            height: 24px;
+            height: 20px;
             top: 18px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            color: var(--white);
-            font-size: 11px;
-            font-weight: 500;
-            padding: 0 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: var(--elevation-1);
             overflow: hidden;
         }
 
         .gantt-bar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 5;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--elevation-3);
+            z-index: 10;
+        }
+
+        .gantt-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
+            background-size: 8px 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .gantt-bar:hover::before {
+            opacity: 1;
         }
 
         .gantt-bar.completed {
-            background: var(--completed-green);
+            background: linear-gradient(135deg, var(--status-completed) 0%, #45a049 100%);
         }
 
         .gantt-bar.in-progress {
-            background: linear-gradient(to right, var(--in-progress-blue) var(--progress, 0%), var(--not-started-gray) var(--progress, 0%));
+            background: linear-gradient(135deg, var(--status-in-progress) 0%, #1976D2 100%);
+            position: relative;
+        }
+
+        .gantt-bar.in-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+            border-radius: 10px;
+            transition: width 0.3s ease;
         }
 
         .gantt-bar.not-started {
-            background: var(--not-started-gray);
-            color: var(--text-medium);
+            background: linear-gradient(135deg, var(--status-not-started) 0%, #BDBDBD 100%);
         }
 
         .gantt-bar.overdue {
-            background: var(--overdue-red);
+            background: linear-gradient(135deg, var(--status-overdue) 0%, #D32F2F 100%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Dependencies */
+        .dependency-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
         }
 
         .dependency-line {
-            position: absolute;
-            stroke: var(--primary-blue);
+            stroke: var(--md-primary);
             stroke-width: 2;
             fill: none;
-            pointer-events: none;
-            z-index: 1;
+            opacity: 0.6;
+            stroke-dasharray: 4 4;
         }
 
         .dependency-arrow {
-            fill: var(--primary-blue);
-        }
-
-        /* Progress Indicator */
-        .progress-text {
-            margin-left: auto;
-            font-size: 11px;
-            font-weight: 600;
+            fill: var(--md-primary);
         }
 
         /* Tooltip */
         .tooltip {
             position: absolute;
-            background: var(--dark-blue);
-            color: var(--white);
-            padding: 12px 16px;
-            font-size: 12px;
+            background: var(--text-primary);
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--elevation-4);
             opacity: 0;
-            transition: opacity 0.2s;
+            transform: translateY(8px);
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
             pointer-events: none;
-            max-width: 300px;
+            max-width: 320px;
+            min-width: 200px;
         }
 
         .tooltip.show {
             opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid var(--text-primary);
+        }
+
+        .tooltip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
         }
 
         .tooltip-title {
             font-weight: 600;
-            margin-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding-bottom: 4px;
+            font-size: 16px;
+            line-height: 1.3;
+            flex: 1;
+        }
+
+        .tooltip-progress {
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 12px;
+            opacity: 0.9;
         }
 
         .tooltip-content {
-            line-height: 1.4;
+            display: grid;
+            gap: 8px;
         }
 
-        /* Task Detail Modal */
+        .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .tooltip-label {
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        .tooltip-value {
+            font-weight: 600;
+        }
+
+        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -408,231 +641,1099 @@
             display: none;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(4px);
         }
 
         .modal {
-            background: var(--white);
+            background: var(--md-surface);
             width: 90%;
             max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: var(--elevation-4);
+            overflow: hidden;
         }
 
         .modal-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid var(--divider);
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-gray);
+            align-items: flex-start;
         }
 
         .modal-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
-            color: var(--dark-blue);
+            color: var(--text-primary);
+            line-height: 1.3;
+            flex: 1;
         }
 
         .modal-close {
             background: none;
             border: none;
-            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             cursor: pointer;
-            color: var(--text-medium);
-            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            margin-left: 16px;
         }
 
         .modal-close:hover {
-            color: var(--text-dark);
+            background: rgba(0, 0, 0, 0.04);
+            color: var(--text-primary);
         }
 
         .modal-content {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: calc(90vh - 200px);
+        }
+
+        .modal-section {
+            margin-bottom: 24px;
+        }
+
+        .modal-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .info-grid {
             display: grid;
             gap: 16px;
         }
 
         .info-row {
-            display: grid;
-            grid-template-columns: 120px 1fr;
-            gap: 16px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
         }
 
         .info-label {
-            font-weight: 600;
-            color: var(--text-medium);
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 14px;
         }
 
         .info-value {
-            color: var(--text-dark);
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+            text-align: right;
         }
 
-        .progress-bar {
-            width: 100%;
+        .progress-bar-container {
+            width: 200px;
             height: 8px;
-            background: var(--not-started-gray);
+            background: var(--divider);
+            border-radius: 4px;
             overflow: hidden;
         }
 
-        .progress-fill {
+        .progress-bar-fill {
             height: 100%;
-            background: var(--completed-green);
-            transition: width 0.3s;
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .gantt-main {
-                flex-direction: column;
-                height: auto;
-            }
-            
-            .task-list-panel {
-                width: 100%;
-                max-height: 400px;
-            }
-            
-            .gantt-header {
-                flex-direction: column;
-                gap: 16px;
-                align-items: stretch;
-            }
-            
-            .mini-calendar {
-                min-width: auto;
-            }
-        }
+        .progress-bar-fill.completed { background: var(--status-completed); }
+        .progress-bar-fill.in-progress { background: var(--status-in-progress); }
+        .progress-bar-fill.not-started { background: var(--status-not-started); }
 
-        @media (max-width: 768px) {
-            .project-meta {
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .task-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
-            .calendar-grid {
-                font-size: 10px;
-            }
-        }
-
-        /* Accessibility */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-
-        /* Custom Scrollbar */
-        .timeline-panel::-webkit-scrollbar,
-        .task-list-panel::-webkit-scrollbar {
+        /* Scrollbar */
+        ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
 
-        .timeline-panel::-webkit-scrollbar-track,
-        .task-list-panel::-webkit-scrollbar-track {
-            background: var(--light-gray);
+        ::-webkit-scrollbar-track {
+            background: var(--md-background);
         }
 
-        .timeline-panel::-webkit-scrollbar-thumb,
-        .task-list-panel::-webkit-scrollbar-thumb {
-            background: var(--border-gray);
+        ::-webkit-scrollbar-thumb {
+            background: var(--divider);
+            border-radius: 4px;
             transition: background-color 0.2s;
         }
 
-        .timeline-panel::-webkit-scrollbar-thumb:hover,
-        .task-list-panel::-webkit-scrollbar-thumb:hover {
-            background: var(--text-medium);
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-disabled);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .task-sidebar {
+                width: 320px;
+            }
+            
+            .gantt-content {
+                flex-direction: column;
+            }
+            
+            .timeline-panel {
+                height: 60vh;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                gap: 16px;
+                padding: 16px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .task-sidebar {
+                width: 100%;
+                height: 40vh;
+            }
+            
+            .timeline-panel {
+                height: 60vh;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--divider);
+            border-top: 3px solid var(--md-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="gantt-container">
-        <!-- Header Section -->
-        <div class="gantt-header">
+    <div class="gantt-app">
+        <!-- Header -->
+        <header class="app-header">
             <div class="project-info">
-                <h1 id="project-title">MySQL Migration Project</h1>
-                <div class="project-meta">
-                    <span><strong>Start:</strong> <span id="project-start">2025-01-01</span></span>
-                    <span><strong>End:</strong> <span id="project-end">2025-12-31</span></span>
-                    <span><strong>Duration:</strong> <span id="project-duration">365 days</span></span>
+                <h1 class="project-title" id="project-title">Migrasi MySQL Enterprise Edition ke Versi 8.4</h1>
+                <div class="project-subtitle" id="project-subtitle">Mei 2025 - Desember 2025 • 5 Phases • 30+ Tasks</div>
+            </div>
+            <div class="header-actions">
+                <div class="current-date">
+                    <span class="material-icons">today</span>
+                    <span id="current-date">Juli 2, 2025</span>
+                </div>
+                <div class="view-toggle">
+                    <button class="active">Gantt</button>
+                    <button>Timeline</button>
+                    <button>Board</button>
                 </div>
             </div>
-            
-            <div class="mini-calendar">
-                <div class="calendar-header">
-                    <button class="calendar-nav" id="prev-month">‹</button>
-                    <span id="calendar-month">July 2025</span>
-                    <button class="calendar-nav" id="next-month">›</button>
-                </div>
-                <div class="calendar-grid" id="calendar-grid">
-                    <!-- Calendar days will be populated by JavaScript -->
-                </div>
-            </div>
-        </div>
+        </header>
 
-        <!-- Main Content Area -->
-        <div class="gantt-main">
-            <!-- Task List Panel -->
-            <div class="task-list-panel">
-                <div id="task-list-container">
-                    <!-- Task list will be populated by JavaScript -->
+        <!-- Main Content -->
+        <div class="gantt-content">
+            <!-- Sidebar -->
+            <aside class="task-sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">Project Tasks</div>
+                    <div class="project-stats">
+                        <span id="completed-tasks">0 completed</span>
+                        <span id="total-tasks">0 total</span>
+                        <span id="progress-percentage">0% done</span>
+                    </div>
                 </div>
-            </div>
+                <div class="task-list" id="task-list">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        Loading tasks...
+                    </div>
+                </div>
+            </aside>
 
-            <!-- Timeline Panel -->
-            <div class="timeline-panel">
+            <!-- Timeline -->
+            <main class="timeline-panel">
                 <div class="timeline-header">
-                    <div class="timeline-months" id="timeline-months">
-                        <!-- Timeline months will be populated by JavaScript -->
-                    </div>
-                    <div class="timeline-weeks" id="timeline-weeks">
-                        <!-- Timeline weeks will be populated by JavaScript -->
+                    <div class="timeline-months" id="timeline-months"></div>
+                    <div class="timeline-weeks" id="timeline-weeks"></div>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-grid" id="timeline-grid">
+                        <svg class="dependency-lines" width="100%" height="100%">
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                                        refX="9" refY="3.5" orient="auto">
+                                    <polygon class="dependency-arrow" points="0 0, 10 3.5, 0 7"/>
+                                </marker>
+                            </defs>
+                        </svg>
                     </div>
                 </div>
-                <div class="timeline-grid" id="timeline-grid">
-                    <!-- Timeline content will be populated by JavaScript -->
-                    <svg class="dependency-lines" width="100%" height="100%" style="position: absolute; top: 0; left: 0; pointer-events: none;">
-                        <!-- Dependency lines will be drawn here -->
-                    </svg>
-                </div>
-            </div>
+            </main>
         </div>
     </div>
 
     <!-- Tooltip -->
     <div class="tooltip" id="tooltip">
-        <div class="tooltip-title" id="tooltip-title"></div>
+        <div class="tooltip-header">
+            <div class="tooltip-title" id="tooltip-title"></div>
+            <div class="tooltip-progress" id="tooltip-progress"></div>
+        </div>
         <div class="tooltip-content" id="tooltip-content"></div>
     </div>
 
-    <!-- Task Detail Modal -->
+    <!-- Modal -->
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal">
             <div class="modal-header">
-                <div class="modal-title" id="modal-title">Task Details</div>
-                <button class="modal-close" id="modal-close">&times;</button>
+                <h2 class="modal-title" id="modal-title"></h2>
+                <button class="modal-close" id="modal-close">
+                    <span class="material-icons">close</span>
+                </button>
             </div>
-            <div class="modal-content" id="modal-content">
-                <!-- Modal content will be populated by JavaScript -->
-            </div>
+            <div class="modal-content" id="modal-content"></div>
         </div>
     </div>
 
-    <script>
+        // Project Data - Migrasi MySQL ke Versi 8.4
+        const projectData = {
+            "project": {
+                "name": "Migrasi MySQL Enterprise Edition ke Versi 8.4",
+                "startDate": "2025-05-01",
+                "endDate": "2025-12-31"
+            },
+            "phases": [
+                {
+                    "id": "phase-1",
+                    "name": "FASE 1: PERSIAPAN & PLANNING",
+                    "color": "#1976D2",
+                    "tasks": [
+                        {
+                            "id": "task-1-1",
+                            "name": "Assessment & Audit",
+                            "startDate": "2025-05-01",
+                            "endDate": "2025-05-28",
+                            "progress": 100,
+                            "pic": "Tim DBA + Vendor",
+                            "description": "Analisis infrastructure existing - Infrastructure Assessment Report",
+                            "dependencies": [],
+                            "status": "completed"
+                        },
+                        {
+                            "id": "task-1-2",
+                            "name": "Breaking Changes Analysis",
+                            "startDate": "2025-05-01",
+                            "endDate": "2025-05-28",
+                            "progress": 100,
+                            "pic": "Tim Development",
+                            "description": "Identifikasi compatibility issues - Breaking Changes Checklist",
+                            "dependencies": [],
+                            "status": "completed"
+                        },
+                        {
+                            "id": "task-1-3",
+                            "name": "Cluster Topology Planning",
+                            "startDate": "2025-05-01",
+                            "endDate": "2025-05-28",
+                            "progress": 100,
+                            "pic": "Tim Infrastructure",
+                            "description": "Design arsitektur target - Topology Blueprint",
+                            "dependencies": [],
+                            "status": "completed"
+                        },
+                        {
+                            "id": "task-1-4",
+                            "name": "Vendor Evaluation",
+                            "startDate": "2025-06-01",
+                            "endDate": "2025-06-28",
+                            "progress": 100,
+                            "pic": "Procurement Team",
+                            "description": "Shortlist 3 vendor terbaik - Vendor Comparison Matrix",
+                            "dependencies": ["task-1-1"],
+                            "status": "completed"
+                        },
+                        {
+                            "id": "task-1-5",
+                            "name": "Budgeting & Cost Analysis",
+                            "startDate": "2025-06-01",
+                            "endDate": "2025-06-28",
+                            "progress": 100,
+                            "pic": "Finance Team",
+                            "description": "Finalisasi budget requirements - Detailed Budget Proposal",
+                            "dependencies": ["task-1-1"],
+                            "status": "completed"
+                        },
+                        {
+                            "id": "task-1-6",
+                            "name": "Application Compatibility Testing",
+                            "startDate": "2025-06-01",
+                            "endDate": "2025-07-15",
+                            "progress": 75,
+                            "pic": "Tim Development",
+                            "description": "Test compatibility aplikasi - Compatibility Report (CURRENT)",
+                            "dependencies": ["task-1-2"],
+                            "status": "in-progress"
+                        },
+                        {
+                            "id": "task-1-7",
+                            "name": "BOD Presentation & Budget Approval",
+                            "startDate": "2025-07-01",
+                            "endDate": "2025-07-15",
+                            "progress": 50,
+                            "pic": "Management",
+                            "description": "Presentasi ke Board of Directors - Budget Approval",
+                            "dependencies": ["task-1-5"],
+                            "status": "in-progress"
+                        },
+                        {
+                            "id": "task-1-8",
+                            "name": "Vendor Selection & Contract",
+                            "startDate": "2025-07-15",
+                            "endDate": "2025-07-31",
+                            "progress": 0,
+                            "pic": "Procurement",
+                            "description": "Tender & Finalisasi kontrak vendor - Signed Contract",
+                            "dependencies": ["task-1-7"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-1-9",
+                            "name": "Rollback Plan Development",
+                            "startDate": "2025-07-15",
+                            "endDate": "2025-07-31",
+                            "progress": 0,
+                            "pic": "Tim DBA",
+                            "description": "Strategi contingency - Rollback Procedure",
+                            "dependencies": ["task-1-6"],
+                            "status": "not-started"
+                        }
+                    ]
+                },
+                {
+                    "id": "phase-2",
+                    "name": "FASE 2: INFRASTRUCTURE DEVELOPMENT",
+                    "color": "#4CAF50",
+                    "tasks": [
+                        {
+                            "id": "task-2-1",
+                            "name": "Hardware Procurement",
+                            "startDate": "2025-08-01",
+                            "endDate": "2025-08-14",
+                            "progress": 0,
+                            "pic": "Vendor + Tim Infrastructure",
+                            "description": "Order NetApp, Sun Switch, Servers - Purchase Orders",
+                            "dependencies": ["task-1-8"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-2-2",
+                            "name": "Site Preparation",
+                            "startDate": "2025-08-15",
+                            "endDate": "2025-08-31",
+                            "progress": 0,
+                            "pic": "Tim Infrastructure",
+                            "description": "Prepare datacenter space - Site Ready",
+                            "dependencies": ["task-2-1"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-2-3",
+                            "name": "Hardware Delivery & Installation",
+                            "startDate": "2025-09-01",
+                            "endDate": "2025-09-28",
+                            "progress": 0,
+                            "pic": "Vendor",
+                            "description": "Equipment delivery & installation - Hardware Commissioned",
+                            "dependencies": ["task-2-2"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-2-4",
+                            "name": "Network Configuration",
+                            "startDate": "2025-09-15",
+                            "endDate": "2025-09-30",
+                            "progress": 0,
+                            "pic": "Vendor + Tim Infrastructure",
+                            "description": "Configure switches & connectivity - Network Ready",
+                            "dependencies": ["task-2-3"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-2-5",
+                            "name": "MySQL Installation & Configuration",
+                            "startDate": "2025-10-01",
+                            "endDate": "2025-10-15",
+                            "progress": 0,
+                            "pic": "Vendor",
+                            "description": "Install MySQL 8.4 Enterprise - MySQL Environment Ready",
+                            "dependencies": ["task-2-4"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-2-6",
+                            "name": "Performance Tuning & Testing",
+                            "startDate": "2025-10-16",
+                            "endDate": "2025-10-31",
+                            "progress": 0,
+                            "pic": "Vendor + Tim DBA",
+                            "description": "Optimize database settings & testing - Infrastructure Sign-off",
+                            "dependencies": ["task-2-5"],
+                            "status": "not-started"
+                        }
+                    ]
+                },
+                {
+                    "id": "phase-3",
+                    "name": "FASE 3: MIGRATION & UPGRADE",
+                    "color": "#F44336",
+                    "tasks": [
+                        {
+                            "id": "task-3-1",
+                            "name": "Pre-Migration Backup",
+                            "startDate": "2025-11-01",
+                            "endDate": "2025-11-07",
+                            "progress": 0,
+                            "pic": "DBA Team",
+                            "description": "Full backup existing data - Backup Confirmation",
+                            "dependencies": ["task-2-6"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-3-2",
+                            "name": "Data Migration Execution",
+                            "startDate": "2025-11-08",
+                            "endDate": "2025-11-14",
+                            "progress": 0,
+                            "pic": "Vendor + DBA Team",
+                            "description": "Migrate data to MySQL 8.4 - Migration Complete",
+                            "dependencies": ["task-3-1"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-3-3",
+                            "name": "Schema Upgrade",
+                            "startDate": "2025-11-08",
+                            "endDate": "2025-11-14",
+                            "progress": 0,
+                            "pic": "Vendor + Development Team",
+                            "description": "Update database schemas - Schema Updated",
+                            "dependencies": ["task-3-1"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-3-4",
+                            "name": "Data Validation",
+                            "startDate": "2025-11-15",
+                            "endDate": "2025-11-21",
+                            "progress": 0,
+                            "pic": "DBA + QA Team",
+                            "description": "Verify data integrity - Validation Report",
+                            "dependencies": ["task-3-2", "task-3-3"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-3-5",
+                            "name": "Performance Testing & Go/No-Go",
+                            "startDate": "2025-11-22",
+                            "endDate": "2025-11-30",
+                            "progress": 0,
+                            "pic": "Vendor + All Teams",
+                            "description": "Test system performance & migration validation - Sign-off Document",
+                            "dependencies": ["task-3-4"],
+                            "status": "not-started"
+                        }
+                    ]
+                },
+                {
+                    "id": "phase-4",
+                    "name": "FASE 4: TESTING & APPLICATION REFINEMENT",
+                    "color": "#9C27B0",
+                    "tasks": [
+                        {
+                            "id": "task-4-1",
+                            "name": "Application Testing & Bug Fixing",
+                            "startDate": "2025-12-01",
+                            "endDate": "2025-12-14",
+                            "progress": 0,
+                            "pic": "Tim Development + QA",
+                            "description": "Test all applications & fix issues - Bug-free Applications",
+                            "dependencies": ["task-3-5"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-4-2",
+                            "name": "Performance Optimization",
+                            "startDate": "2025-12-08",
+                            "endDate": "2025-12-14",
+                            "progress": 0,
+                            "pic": "Tim Development",
+                            "description": "Optimize application performance - Optimized Code",
+                            "dependencies": ["task-4-1"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-4-3",
+                            "name": "User Acceptance Testing",
+                            "startDate": "2025-12-15",
+                            "endDate": "2025-12-21",
+                            "progress": 0,
+                            "pic": "End Users + QA Team",
+                            "description": "End-user validation - UAT Sign-off",
+                            "dependencies": ["task-4-2"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-4-4",
+                            "name": "Documentation & Training",
+                            "startDate": "2025-12-15",
+                            "endDate": "2025-12-21",
+                            "progress": 0,
+                            "pic": "All Teams",
+                            "description": "Update documentation & train teams - Training Complete",
+                            "dependencies": ["task-4-2"],
+                            "status": "not-started"
+                        }
+                    ]
+                },
+                {
+                    "id": "phase-5",
+                    "name": "FASE 5: GO-LIVE & PROJECT CLOSURE",
+                    "color": "#FF9800",
+                    "tasks": [
+                        {
+                            "id": "task-5-1",
+                            "name": "Production Cutover",
+                            "startDate": "2025-12-22",
+                            "endDate": "2025-12-25",
+                            "progress": 0,
+                            "pic": "Project Manager + All Teams",
+                            "description": "Switch to new environment - Production Live",
+                            "dependencies": ["task-4-3", "task-4-4"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-5-2",
+                            "name": "Post Go-Live Monitoring",
+                            "startDate": "2025-12-25",
+                            "endDate": "2025-12-28",
+                            "progress": 0,
+                            "pic": "All Teams",
+                            "description": "24/7 monitoring first 72 hours - Stability Confirmed",
+                            "dependencies": ["task-5-1"],
+                            "status": "not-started"
+                        },
+                        {
+                            "id": "task-5-3",
+                            "name": "Project Closure & Documentation",
+                            "startDate": "2025-12-29",
+                            "endDate": "2025-12-31",
+                            "progress": 0,
+                            "pic": "Project Manager",
+                            "description": "Document lessons learned - Project Closure Report",
+                            "dependencies": ["task-5-2"],
+                            "status": "not-started"
+                        }
+                    ]
+                }
+            ]
+        };
+
+        class MaterialGanttChart {
+            constructor(data) {
+                this.data = data;
+                this.currentDate = new Date('2025-07-02');
+                this.timelineStart = new Date(data.project.startDate);
+                this.timelineEnd = new Date(data.project.endDate);
+                this.dayWidth = 4; // pixels per day
+                this.init();
+            }
+
+            init() {
+                this.updateProjectStats();
+                this.renderTaskList();
+                this.renderTimeline();
+                this.renderDependencies();
+                this.bindEvents();
+                
+                // Hide loading after 500ms
+                setTimeout(() => {
+                    $('.loading').hide();
+                }, 500);
+            }
+
+            updateProjectStats() {
+                let totalTasks = 0;
+                let completedTasks = 0;
+                
+                this.data.phases.forEach(phase => {
+                    totalTasks += phase.tasks.length;
+                    completedTasks += phase.tasks.filter(task => task.status === 'completed').length;
+                });
+                
+                const progressPercentage = Math.round((completedTasks / totalTasks) * 100);
+                
+                $('#completed-tasks').text(`${completedTasks} completed`);
+                $('#total-tasks').text(`${totalTasks} total`);
+                $('#progress-percentage').text(`${progressPercentage}% done`);
+                
+                // Update project subtitle
+                $('#project-subtitle').text(`Mei 2025 - Desember 2025 • ${this.data.phases.length} Phases • ${totalTasks} Tasks`);
+            }
+
+            renderTaskList() {
+                const container = $('#task-list');
+                container.empty();
+
+                this.data.phases.forEach(phase => {
+                    const completedTasks = phase.tasks.filter(task => task.status === 'completed').length;
+                    const totalTasks = phase.tasks.length;
+                    const phaseProgress = Math.round((completedTasks / totalTasks) * 100);
+
+                    const phaseHtml = `
+                        <div class="phase-group" data-phase-id="${phase.id}">
+                            <div class="phase-header md-ripple" style="border-left-color: ${phase.color}">
+                                <div class="phase-info">
+                                    <div class="phase-name">${phase.name}</div>
+                                    <div class="phase-meta">
+                                        <span>${completedTasks}/${totalTasks} tasks</span>
+                                        <span>${phaseProgress}% complete</span>
+                                    </div>
+                                </div>
+                                <span class="phase-toggle material-icons">expand_more</span>
+                            </div>
+                            <div class="phase-tasks">
+                                ${phase.tasks.map(task => this.renderTaskRow(task)).join('')}
+                            </div>
+                        </div>
+                    `;
+                    container.append(phaseHtml);
+                });
+            }
+
+            renderTaskRow(task) {
+                const circumference = 2 * Math.PI * 14; // radius = 14
+                const strokeDasharray = `${(task.progress / 100) * circumference} ${circumference}`;
+                
+                return `
+                    <div class="task-row md-ripple" data-task-id="${task.id}">
+                        <div class="task-info">
+                            <div class="task-name">${task.name}</div>
+                            <div class="task-details">
+                                <div class="task-status status-${task.status}">
+                                    <div class="status-dot"></div>
+                                    <span>${this.formatStatus(task.status)}</span>
+                                </div>
+                                <span>${this.formatDateRange(task.startDate, task.endDate)}</span>
+                            </div>
+                        </div>
+                        <div class="task-progress">
+                            <div class="progress-circle ${task.status}">
+                                <svg width="32" height="32">
+                                    <circle class="progress-bg" cx="16" cy="16" r="14"/>
+                                    <circle class="progress-fill" cx="16" cy="16" r="14" 
+                                            stroke-dasharray="${strokeDasharray}"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderTimeline() {
+                this.renderTimelineHeader();
+                this.renderTimelineGrid();
+            }
+
+            renderTimelineHeader() {
+                const monthsContainer = $('#timeline-months');
+                const weeksContainer = $('#timeline-weeks');
+                monthsContainer.empty();
+                weeksContainer.empty();
+
+                // Render months
+                let currentDate = new Date(this.timelineStart);
+                while (currentDate < this.timelineEnd) {
+                    const monthStart = new Date(currentDate);
+                    const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+                    const monthEndClamped = monthEnd > this.timelineEnd ? this.timelineEnd : monthEnd;
+                    
+                    const monthDays = Math.ceil((monthEndClamped - monthStart) / (1000 * 60 * 60 * 24));
+                    const monthWidth = monthDays * this.dayWidth;
+
+                    monthsContainer.append(`
+                        <div class="month-header" style="width: ${monthWidth}px;">
+                            ${monthStart.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })}
+                        </div>
+                    `);
+
+                    currentDate.setMonth(currentDate.getMonth() + 1);
+                    currentDate.setDate(1);
+                }
+
+                // Render weeks
+                currentDate = new Date(this.timelineStart);
+                while (currentDate < this.timelineEnd) {
+                    const weekStart = new Date(currentDate);
+                    const weekEnd = new Date(currentDate);
+                    weekEnd.setDate(weekEnd.getDate() + 6);
+                    const weekEndClamped = weekEnd > this.timelineEnd ? this.timelineEnd : weekEnd;
+                    
+                    const weekDays = Math.ceil((weekEndClamped - weekStart) / (1000 * 60 * 60 * 24));
+                    const weekWidth = weekDays * this.dayWidth;
+                    const isWeekend = weekStart.getDay() === 0 || weekStart.getDay() === 6;
+                    const isToday = this.isSameWeek(weekStart, this.currentDate);
+
+                    let classes = 'week-header';
+                    if (isWeekend) classes += ' weekend';
+                    if (isToday) classes += ' today';
+
+                    weeksContainer.append(`
+                        <div class="${classes}" style="width: ${weekWidth}px;">
+                            ${weekStart.getDate()}
+                        </div>
+                    `);
+
+                    currentDate.setDate(currentDate.getDate() + 7);
+                }
+            }
+
+            renderTimelineGrid() {
+                const container = $('#timeline-grid');
+                const svg = container.find('svg');
+                container.find('.timeline-row, .phase-timeline-row').remove();
+
+                this.data.phases.forEach(phase => {
+                    // Add phase header row
+                    container.append(`<div class="phase-timeline-row" data-phase-id="${phase.id}"></div>`);
+                    
+                    // Add task rows
+                    phase.tasks.forEach(task => {
+                        const row = $(`<div class="timeline-row" data-task-id="${task.id}"></div>`);
+                        const ganttBar = this.createGanttBar(task);
+                        row.append(ganttBar);
+                        container.append(row);
+                    });
+                });
+                
+                // Ensure SVG is on top
+                container.append(svg);
+            }
+
+            createGanttBar(task) {
+                const startDate = new Date(task.startDate);
+                const endDate = new Date(task.endDate);
+                const daysSinceStart = Math.floor((startDate - this.timelineStart) / (1000 * 60 * 60 * 24));
+                const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                
+                const left = daysSinceStart * this.dayWidth;
+                const width = Math.max(duration * this.dayWidth, 20); // Minimum width
+
+                const bar = $(`
+                    <div class="gantt-bar ${task.status}" 
+                         style="left: ${left}px; width: ${width}px;"
+                         data-task-id="${task.id}">
+                    </div>
+                `);
+
+                // Add progress overlay for in-progress tasks
+                if (task.status === 'in-progress') {
+                    bar.css('--progress-width', `${task.progress}%`);
+                    bar.append(`<div style="position: absolute; top: 0; left: 0; height: 100%; width: ${task.progress}%; background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%); border-radius: 10px;"></div>`);
+                }
+
+                return bar;
+            }
+
+            renderDependencies() {
+                const svg = $('.dependency-lines');
+                svg.find('path').remove();
+
+                // Create a map of task positions
+                const taskPositions = {};
+                $('.timeline-row').each((index, row) => {
+                    const taskId = $(row).data('task-id');
+                    const ganttBar = $(row).find('.gantt-bar');
+                    if (ganttBar.length) {
+                        const barRect = ganttBar[0].getBoundingClientRect();
+                        const containerRect = $('.timeline-grid')[0].getBoundingClientRect();
+                        taskPositions[taskId] = {
+                            x: barRect.left - containerRect.left,
+                            y: barRect.top - containerRect.top + barRect.height / 2,
+                            width: barRect.width
+                        };
+                    }
+                });
+
+                // Draw dependency lines
+                this.data.phases.forEach(phase => {
+                    phase.tasks.forEach(task => {
+                        task.dependencies.forEach(depId => {
+                            if (taskPositions[task.id] && taskPositions[depId]) {
+                                this.drawDependencyLine(svg, taskPositions[depId], taskPositions[task.id]);
+                            }
+                        });
+                    });
+                });
+            }
+
+            drawDependencyLine(svg, from, to) {
+                const fromX = from.x + from.width;
+                const fromY = from.y;
+                const toX = to.x;
+                const toY = to.y;
+
+                const path = `M ${fromX} ${fromY} L ${fromX + 20} ${fromY} L ${fromX + 20} ${toY} L ${toX} ${toY}`;
+                
+                svg.append(`
+                    <path class="dependency-line" d="${path}" marker-end="url(#arrowhead)"/>
+                `);
+            }
+
+            bindEvents() {
+                // Phase toggle
+                $(document).on('click', '.phase-header', (e) => {
+                    const phaseGroup = $(e.currentTarget).closest('.phase-group');
+                    phaseGroup.toggleClass('collapsed');
+                });
+
+                // Task click for modal
+                $(document).on('click', '.task-row, .gantt-bar', (e) => {
+                    e.stopPropagation();
+                    const taskId = $(e.currentTarget).data('task-id');
+                    const task = this.findTaskById(taskId);
+                    if (task) {
+                        this.showTaskModal(task);
+                    }
+                });
+
+                // Tooltip events
+                $(document).on('mouseenter', '.gantt-bar', (e) => {
+                    const taskId = $(e.currentTarget).data('task-id');
+                    const task = this.findTaskById(taskId);
+                    if (task) {
+                        this.showTooltip(e, task);
+                    }
+                });
+
+                $(document).on('mouseleave', '.gantt-bar', () => {
+                    this.hideTooltip();
+                });
+
+                // Modal close
+                $('#modal-close, #modal-overlay').on('click', (e) => {
+                    if (e.target === e.currentTarget) {
+                        this.hideTaskModal();
+                    }
+                });
+
+                // Escape key to close modal
+                $(document).on('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.hideTaskModal();
+                    }
+                });
+
+                // Window resize
+                $(window).on('resize', () => {
+                    this.renderDependencies();
+                });
+            }
+
+            showTooltip(event, task) {
+                const tooltip = $('#tooltip');
+                const dependencies = task.dependencies.map(depId => {
+                    const depTask = this.findTaskById(depId);
+                    return depTask ? depTask.name : depId;
+                }).join(', ');
+
+                $('#tooltip-title').text(task.name);
+                $('#tooltip-progress').text(`${task.progress}%`);
+                $('#tooltip-content').html(`
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">PIC</span>
+                        <span class="tooltip-value">${task.pic}</span>
+                    </div>
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Status</span>
+                        <span class="tooltip-value">${this.formatStatus(task.status)}</span>
+                    </div>
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Duration</span>
+                        <span class="tooltip-value">${this.formatDateRange(task.startDate, task.endDate)}</span>
+                    </div>
+                    ${dependencies ? `
+                        <div class="tooltip-row">
+                            <span class="tooltip-label">Dependencies</span>
+                            <span class="tooltip-value">${dependencies}</span>
+                        </div>
+                    ` : ''}
+                `);
+
+                const rect = event.currentTarget.getBoundingClientRect();
+                tooltip.css({
+                    left: rect.left + rect.width / 2 - 160,
+                    top: rect.bottom + 10
+                }).addClass('show');
+            }
+
+            hideTooltip() {
+                $('#tooltip').removeClass('show');
+            }
+
+            showTaskModal(task) {
+                const dependencies = task.dependencies.map(depId => {
+                    const depTask = this.findTaskById(depId);
+                    return depTask ? depTask.name : depId;
+                });
+
+                $('#modal-title').text(task.name);
+                $('#modal-content').html(`
+                    <div class="modal-section">
+                        <div class="modal-section-title">Overview</div>
+                        <div class="info-grid">
+                            <div class="info-row">
+                                <span class="info-label">Status</span>
+                                <span class="info-value">${this.formatStatus(task.status)}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Progress</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill ${task.status}" style="width: ${task.progress}%"></div>
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Responsible</span>
+                                <span class="info-value">${task.pic}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-section">
+                        <div class="modal-section-title">Timeline</div>
+                        <div class="info-grid">
+                            <div class="info-row">
+                                <span class="info-label">Start Date</span>
+                                <span class="info-value">${this.formatDate(new Date(task.startDate))}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">End Date</span>
+                                <span class="info-value">${this.formatDate(new Date(task.endDate))}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Duration</span>
+                                <span class="info-value">${Math.ceil((new Date(task.endDate) - new Date(task.startDate)) / (1000 * 60 * 60 * 24))} days</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${dependencies.length > 0 ? `
+                        <div class="modal-section">
+                            <div class="modal-section-title">Dependencies</div>
+                            <div class="info-grid">
+                                <div class="info-row">
+                                    <span class="info-label">Depends on</span>
+                                    <span class="info-value">${dependencies.join(', ')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="modal-section">
+                        <div class="modal-section-title">Description</div>
+                        <p style="color: var(--text-secondary); line-height: 1.5;">${task.description}</p>
+                    </div>
+                `);
+
+                $('#modal-overlay').css('display', 'flex');
+            }
+
+            hideTaskModal() {
+                $('#modal-overlay').hide();
+            }
+
+            // Utility methods
+            findTaskById(taskId) {
+                for (const phase of this.data.phases) {
+                    for (const task of phase.tasks) {
+                        if (task.id === taskId) {
+                            return task;
+                        }
+                    }
+                }
+                return null;
+            }
+
+            formatStatus(status) {
+                const statusMap = {
+                    'completed': 'Completed',
+                    'in-progress': 'In Progress',
+                    'not-started': 'Not Started',
+                    'overdue': 'Overdue'
+                };
+                return statusMap[status] || status;
+            }
+
+            formatDate(date) {
+                return date.toLocaleDateString('id-ID', { 
+                    day: '2-digit',
+                    month: 'short', 
+                    year: 'numeric' 
+                });
+            }
+
+            formatDateRange(startDate, endDate) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                return `${this.formatDate(start)} - ${this.formatDate(end)}`;
+            }
+
+            isSameWeek(date1, date2) {
+                const week1 = Math.floor(date1.getTime() / (7 * 24 * 60 * 60 * 1000));
+                const week2 = Math.floor(date2.getTime() / (7 * 24 * 60 * 60 * 1000));
+                return week1 === week2;
+            }
+        }
+
+        // Initialize the Gantt Chart when DOM is ready
+        $(document).ready(() => {
+            const ganttChart = new MaterialGanttChart(projectData);
+        });
+    </script>
+</body>
+</html>
         // Project Data - Migrasi MySQL ke Versi 8.4
         const projectData = {
             "project": {
